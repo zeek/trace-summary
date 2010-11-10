@@ -5,9 +5,10 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 # Prohibit in-source builds.
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-    message(FATAL_ERROR "In-source builds are not allowed. Please use "
-                        "./configure to choose a build directory and "
-                        "initialize the build configuration.")
+    message(FATAL_ERROR "In-source CMake builds are not allowed.  CMake "
+                        "is not required to build trace-summary, you "
+                        "may choose to simply copy it to a directory in "
+                        "your PATH")
 endif ()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
