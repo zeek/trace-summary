@@ -23,18 +23,24 @@ project(trace-summary)
 
 find_package(PythonInterp REQUIRED)
 
-execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import SubnetTree"
-                RESULT_VARIABLE SUBNETTREE_IMPORT_RESULT)
+if (NOT SubnetTree_FOUND)
+    # the check for SubnetTree is ignored if SubnetTree_FOUND is set
+    # in the cache or by another project that is including this one
+    execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import SubnetTree"
+                    RESULT_VARIABLE SUBNETTREE_IMPORT_RESULT)
 
-if (SUBNETTREE_IMPORT_RESULT)
-    message(FATAL_ERROR "Could not find required dependency: SubnetTree")
+    if (SUBNETTREE_IMPORT_RESULT)
+        message(FATAL_ERROR "Could not find required dependency: SubnetTree")
+    endif ()
 endif ()
 
 # Check cache value first to avoid displaying "Found" messages everytime
 if (NOT IPSUMDUMP_EXE)
     find_program(IPSUMDUMP_EXE ipsumdump)
     if (NOT IPSUMDUMP_EXE)
-        message(FATAL_ERROR "Could not find required dependency: ipsumdump")
+        message(WARNING "Could not find required dependency: 'ipsumdump', "
+                        "trace-summary will not be installed")
+        return ()
     else ()
         message(STATUS "Found ipsumdump: ${IPSUMDUMP_EXE}")
     endif ()
