@@ -38,9 +38,8 @@ endif ()
 if (NOT IPSUMDUMP_EXE)
     find_program(IPSUMDUMP_EXE ipsumdump)
     if (NOT IPSUMDUMP_EXE)
-        message(WARNING "Could not find required dependency: 'ipsumdump', "
-                        "trace-summary will not be installed")
-        return ()
+        message(WARNING "Could not find dependency: 'ipsumdump', "
+                        "trace-summary will not be able to read pcap traces")
     else ()
         message(STATUS "Found ipsumdump: ${IPSUMDUMP_EXE}")
     endif ()
