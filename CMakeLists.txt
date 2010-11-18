@@ -21,7 +21,11 @@ project(trace-summary)
 ########################################################################
 ## Dependency Configuration
 
-find_package(PythonInterp REQUIRED)
+find_package(PythonInterp)
+
+if (NOT PYTHON_EXECUTABLE)
+    message(FATAL_ERROR "A Python installation is required.")
+endif ()
 
 if (NOT SubnetTree_FOUND)
     # the check for SubnetTree is ignored if SubnetTree_FOUND is set
