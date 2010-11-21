@@ -27,7 +27,7 @@ if (NOT PYTHON_EXECUTABLE)
     message(FATAL_ERROR "A Python installation is required.")
 endif ()
 
-if (NOT SubnetTree_FOUND)
+if (NOT SUBNETTREE_FOUND)
     # the check for SubnetTree is ignored if SubnetTree_FOUND is set
     # in the cache or by another project that is including this one
     execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import SubnetTree"
