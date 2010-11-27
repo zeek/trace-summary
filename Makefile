@@ -1,19 +1,17 @@
 
-DISTFILES = README README.html COPYING CHANGES Makefile trace-summary 
+DISTFILES = README README.html COPYING CHANGES Makefile trace-summary
 
 VERSION=$(shell grep ^Version trace-summary | awk 'BEGIN{IFS="[= ]}"}{print $$3}')
 DISTDIR=trace-summary-$(VERSION)
 
-doc: README.html
+docs: README
+	rst2html.py README >README.html
 
-README.html: README
-	asciidoc -a toc -b xhtml11-custom README
-    
-dist: doc
+dist: docs
 	rm -rf $(DISTDIR)
 	mkdir $(DISTDIR)
 	cp $(DISTFILES) $(DISTDIR)
 	tar czvf $(DISTDIR).tgz $(DISTDIR)
 	rm -rf $(DISTDIR)
-	     
+
 
