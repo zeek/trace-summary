@@ -1,23 +1,30 @@
-//	-*- AsciiDoc -*-
+..	-*- mode: rst-mode -*-
+
 trace-summary - Generating network traffic summaries.
 =====================================================
+
+.. |today| date::
+
+Date: |today|
+
+.. contents::
 
 Overview
 --------
 
-+trace-summary+ is a Python script which generates break-downs of
+``trace-summary`` is a Python script which generates break-downs of
 network traffic, including lists of the top hosts, protocols, ports,
 etc. Optionally, it can generate output separately for incoming vs.
 outgoing traffic, per subnet, and per time-interval.
 
-The script reads both packet traces in
-http://www.tcpdump.org[+libpcap+] format and connection logs 
-produced by the http://www.bro-ids.org[Bro] network intrusion
-detection system. 
+The script reads both packet traces in `libpcap
+<http://www.tcpdump.org>`_ format and connection logs produced by
+the `Bro <http://www.bro-ids.org>`_ network intrusion detection
+system. 
 
 Here are two example outputs in the most basic form (note that IP
 addresses are 'anonymized'). The first is from a packet trace and
-the second from a Bro connection log:
+the second from a Bro connection log::
 
 
  >== Total === 2005-01-06-14-23-33 - 2005-01-06-15-23-43
@@ -53,7 +60,7 @@ the second from a Bro connection log:
 Download
 --------
 
-Download http://www.icir.org/robin/trace-summary-0.5.tar.gz[+trace-summary-0.5.tar.gz+]
+Download `trace-summary-0.5.tar.gz <http://www.icir.org/robin/trace-summary-0.5.tar.gz>`_
 
 Prerequisites
 -------------
@@ -61,13 +68,13 @@ Prerequisites
 * This script requires Python 2.4 or newer.
 
 * It also requires the installation of
-  - the http://www.icir.org/robin/pysubnettree[+pysubnettree+] Python module, and
-  - Eddie Kohler's http://www.cs.ucla.edu/~kohler/ipsumdump[+ipsumdump+] 
+  - the `pysubnettree <http://www.icir.org/robin/pysubnettree>`_ Python module, and
+  - Eddie Kohler's `ipsumdump <http://www.cs.ucla.edu/~kohler/ipsumdump>`_ 
 
 Installation
 ------------
 
-Simply copy the script into some directory which is in your +PATH+.
+Simply copy the script into some directory which is in your ``PATH``.
 
 Usage
 -----
@@ -76,8 +83,8 @@ The general usage is
 
    trace-summary [options] [input-file]
 
-Per default, it assumes the +input-file+ to be a +libpcap+ trace
-file. If it is a Bro connection log, use +-c+. If +input-file+ is
+Per default, it assumes the ``input-file`` to be a ``libpcap`` trace
+file. If it is a Bro connection log, use ``-c``. If ``input-file`` is
 not given, the script reads from stdin. It writes its output to
 stdout. 
 
@@ -85,45 +92,50 @@ Options
 ~~~~~~~
 
 There are a bunch of options. The most important ones summmarized
-below. Run +trace-summary \--help+ to see the full list including
+below. Run ``trace-summary \--help`` to see the full list including
 some more estoric ones. 
 
-*-c*::         Input is a Bro connection log instead of a +libpcap+ trace
-               file.
+:-c:
+    Input is a Bro connection log instead of a ``libpcap`` trace
+    file.
 
-*-b*::         Counts all percentages in bytes rather than number of
-               packets/connections.
+:-b:
+    Counts all percentages in bytes rather than number of
+    packets/connections.
        
-*-E <file>*::  Gives a file which contains a list of networks to
-               ignore for the analysis. The file must contain one
-               network per line, where each network is of the CIDR
-               form +a.b.c.d/mask+. Empty lines and lines starting
-               with a "#" are ignored. 
+:-E <file>:
+    Gives a file which contains a list of networks to ignore for the
+    analysis. The file must contain one network per line, where each
+    network is of the CIDR form ``a.b.c.d/mask``. Empty lines and
+    lines starting with a "#" are ignored. 
 
-*-i <duration>*:: Creates totals for each time interval of the given
-                  length (default is seconds; add "+m+" for minutes
-                  and "+h+" for hours). Use +-v+ if you also want to
-                  see the breakdowns for each interval.
+:-i <duration>:
+    Creates totals for each time interval of the given length
+    (default is seconds; add "``m``" for minutes and "``h``" for
+    hours). Use ``-v`` if you also want to see the breakdowns for
+    each interval.
 
-*-l <file>*::  Generates separate summaries for incoming and outgoing
-               traffic. +<file>+ is a file which contains a list of
-               networks to be considered local. Format as for +-E+.
-               
-*-n <n>*:: Show top n entries in each break-down.
-               Default is 10.
-              
-*-r*::         Resolves hostnames in the output.       
-
-*-s <n>*::     Gives the sample factor if the input has been sampled.
-
-*-S <n>*::     Sample input with the given factor; less accurate but
-               faster and saves memory.
-
-*-m*::         Does skip memory-expensive statistics.
-
-*-v*::         Generates full break-downs for each time interval. 
-               Requires +-i+.
+:-l <file>:
+    Generates separate summaries for incoming and outgoing traffic.
+    ``<file>`` is a file which contains a list of networks to be
+    considered local. Format as for ``-E``.
     
+:-n <n>:
+    Show top n entries in each break-down. Default is 10.
+    
+:-r:
+    Resolves hostnames in the output.  
 
+:-s <n>:
+    Gives the sample factor if the input has been sampled.
 
+:-S <n>:
+    Sample input with the given factor; less accurate but faster and
+    saves memory.
 
+:-m:
+    Does skip memory-expensive statistics.
+
+:-v:
+    Generates full break-downs for each time interval.  Requires
+    ``-i``.

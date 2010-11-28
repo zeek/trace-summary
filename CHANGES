@@ -1,4 +1,14 @@
 
-0.6  -  License changed to BSD-style. 
+0.7
+    - Repository switched to git, and README converted to reSt.
 
-0.5  -  First release.
+    - Sample factor now included in output.
+
+    - Bugfix: Sample factor was not applied to local subnets
+      break-down.
+
+0.6
+    License changed to BSD-style.
+
+0.5
+    First release.
