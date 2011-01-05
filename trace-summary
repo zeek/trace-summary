@@ -10,6 +10,7 @@ import errno
 import resource
 import optparse
 import random
+import subprocess
 
 Version = 0.7
 
@@ -331,7 +332,7 @@ def readPcap(file):
     global Incoming
     global Outgoing
     
-    for line in os.popen("ipsumdump -r %s --timestamp --src --dst --sport --dport --length --protocol --fragment --payload-length -Q" % file):
+    for line in subprocess.Popen("ipsumdump -r %s --timestamp --src --dst --sport --dport --length --protocol --fragment --payload-length -Q" % file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout:
 
         if line.startswith("!"):
             continue
@@ -732,6 +733,13 @@ if len(args) > 0:
 if Options.external and not Options.localnets:
     print >>sys.stderr, "Need -l for -e."
     sys.exit(1)
+
+# If reading pcap traces, then ipsumdump is required
+if not Options.conns:
+    proc = subprocess.Popen("ipsumdump -v", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if proc.wait() != 0:
+        print >>sys.stderr, "Can't read pcap trace: 'ipsumdump' is required."
+        sys.exit(1)
     
 # Make per-interval summaries.    
 if Options.ilen:

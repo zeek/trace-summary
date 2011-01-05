@@ -1,3 +1,13 @@
+0.71 | 2011-01-04 18:36:36 -0800
+
+  * Better error message when missing Python package. (Jon Siwek)
+
+  * Better error message if ipsumdump not installed. (Jon Siwek)
+
+  * Migrated from os.popen (deprecated since Python 2.6) to
+    subprocess.Popen (available since Python 2.4). (Jon Siwek)
+
+  * Switch to CMake-based installation (Jon Siwek)
 
 0.7
     - Repository switched to git, and README converted to reSt.
