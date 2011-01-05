@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-Version = 0.7
+Version = 0.71
 
 random.seed()
 
@@ -734,7 +734,7 @@ if Options.external and not Options.localnets:
     print >>sys.stderr, "Need -l for -e."
     sys.exit(1)
 
-# If reading pcap traces, then ipsumdump is required
+# If reading pcap traces, then ipsumdump is required.
 if not Options.conns:
     proc = subprocess.Popen("ipsumdump -v", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     if proc.wait() != 0:
