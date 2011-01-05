@@ -72,6 +72,16 @@ fi
 cat $changes >>$tmp
 
 echo
+
+# If we are ahead of origin, we can amend. If not, we need to create a new commit.
+if git status | grep -q "is ahead of 'origin/master'"; then
+    echo CHANGES modifications will be amended to last commit.
+    amend=1
+else
+    echo CHANGES modifications will become a new commit.
+    amend=0
+fi
+
 echo Type Enter to edit new $changes, or CTRL-C to abort without changes. 
 read
 eval $EDITOR $tmp
@@ -81,7 +91,12 @@ mv $tmp $changes
 echo $version_short >$version
 
 git add $changes $version
-git commit --amend
+
+if [ "$amend" == "1" ]; then
+    git commit --amend
+else
+    git commit
+fi
 
 echo "Old $tmp in saved in ${changes}.bak."
 echo "Set $version to $version_full."
