@@ -52,7 +52,7 @@ endif ()
 ########################################################################
 ## Install Files
 
-install(PROGRAMS trace-summary DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(PROGRAMS trace-summary DESTINATION bin)
 
 ########################################################################
 ## Build Summary
