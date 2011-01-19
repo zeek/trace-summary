@@ -21,6 +21,8 @@ project(trace-summary)
 ########################################################################
 ## Dependency Configuration
 
+include(MacDependencyPaths)
+
 find_package(PythonInterp)
 
 if (NOT PYTHON_EXECUTABLE)
