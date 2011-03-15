@@ -1,3 +1,6 @@
+project(trace-summary NONE)
+# Python is checked as a dependency below
+
 ########################################################################
 ## CMake Configuration
 
@@ -12,11 +15,6 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 endif ()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-########################################################################
-## Project/Build Configuration
-
-project(trace-summary)
 
 ########################################################################
 ## Dependency Configuration
