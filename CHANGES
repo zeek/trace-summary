@@ -1,3 +1,9 @@
+0.71-6 | 2011-03-14 17:41:05 -0700
+
+  * CMake tweaks. (Jon Siwek)
+
+  * Prettyfing the message about sampling being in effect.
+    
 0.71-3 | 2011-01-15 14:14:07 -0800
 
   * Updating update-changes. (Robin Sommer)
