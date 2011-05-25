@@ -52,7 +52,8 @@ endif ()
 ########################################################################
 ## Install Files
 
-install(PROGRAMS trace-summary DESTINATION bin)
+include(InstallShellScript)
+InstallShellScript(bin trace-summary)
 
 ########################################################################
 ## Build Summary
