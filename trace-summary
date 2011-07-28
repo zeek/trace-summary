@@ -455,37 +455,64 @@ def parseConnLine(line):
 
     global LastOutputTime, BaseTime
 
+    ts_idx = 0
+    uid_idx = 1
+    orig_h_idx = 2
+    orig_p_idx = 3
+    resp_h_idx = 4
+    resp_p_idx = 5
+    proto_idx = 6
+    service_idx = 7
+    duration_idx = 8
+    orig_bytes_idx = 9
+    resp_bytes_idx = 10
+    conn_state_idx = 11
+    local_orig_idx = 12
+    missed_bytes_idx = 13
+    history_idx = 14
+
     if Options.sample > 0 and random.random() > Options.sample:
         return
 
     f = line.split()
+
+    # '#' is the default log header prefix, skip lines that start with that
+    if f[0] == "#":
+        return
+
+    uid = f[uid_idx]
 
     if len(f) < 11: # 11 is ok for icmp
         print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
         return
 
     try:
-        time = float(f[0])
+        time = float(f[ts_idx])
     except ValueError:
-        print >>sys.stderr, "Invalid starting time %s" % f[0]
+        print >>sys.stderr, "Invalid starting time %s" % f[ts_idx]
         return
 
-    if f[1] != "?":
+    if f[duration_idx] != "-":
         try:
-            duration = float(f[1])
+            duration = float(f[duration_idx])
         except:
-            print >>sys.stderr, "Invalid starting time %s" % f[0]
-            return
+            # The default unset/empty field string can be changed from "-"
+            # and in that case, it's hard to know if this exception is due
+            # to that or because we're looking at the wrong column entirely,
+            # so just print an error and continue with the assumption of
+            # an unset/empty duration column.
+            print >>sys.stderr, "Invalid duration %s" % f[duration_idx]
+            duration = 0
     else:
-        duration = 0;
+        duration = 0
 
     if time < Options.mintime or (time + duration) > Options.maxtime:
         return
 
-    if Options.tcp and f[7] != "tcp":
+    if Options.tcp and f[proto_idx] != "tcp":
         return
 
-    if Options.udp and f[7] != "udp":
+    if Options.udp and f[proto_idx] != "udp":
         return
 
     if not BaseTime:
@@ -501,31 +528,31 @@ def parseConnLine(line):
         iupdate.pkts = 1 # no. connections
 
         try:
-            bytes_orig = int(f[8])
+            bytes_orig = int(f[orig_bytes_idx])
         except:
             bytes_orig = 0
 
         try:
-            bytes_resp = int(f[9])
+            bytes_resp = int(f[resp_bytes_idx])
         except:
             bytes_resp = 0
 
         iupdate.bytes = bytes_orig + bytes_resp;
-        iupdate.src_ip = socket.inet_aton(f[2])
+        iupdate.src_ip = socket.inet_aton(f[orig_h_idx])
         if iupdate.src_ip in ExcludeNets:
             return
-        iupdate.src_port = int(f[5])
-        iupdate.dst_ip = socket.inet_aton(f[3])
+        iupdate.src_port = int(f[orig_p_idx])
+        iupdate.dst_ip = socket.inet_aton(f[resp_h_idx])
         if iupdate.dst_ip in ExcludeNets:
             return
-        iupdate.dst_port = int(f[6])
-        iupdate.prot = Protocols[f[7]]
+        iupdate.dst_port = int(f[resp_p_idx])
+        iupdate.prot = Protocols[f[proto_idx]]
 
-        iupdate.service = f[4]
+        iupdate.service = f[service_idx]
         if iupdate.service[-1] == "?":
             iupdate.service = iupdate.service[:-1]
         iupdate.frags = 0
-        iupdate.state = f[10]
+        iupdate.state = f[conn_state_idx]
         iupdate.start = time
 
     except LookupError:
@@ -533,27 +560,27 @@ def parseConnLine(line):
         return
 
     try:
-        iupdate.end = time + float(f[1])
+        iupdate.end = time + duration
     except ValueError:
         iupdate.end = time
 
     try:
-        payload_orig = int(f[8])
+        payload_orig = int(f[orig_bytes_idx])
 
         if duration and payload_orig * 8 / (1024 * 1024 * duration) > 700:
             # Bandwith exceed due to Bro bug.
-            print >>sys.stderr, "%.6f originator exceeds bandwith" % time
+            print >>sys.stderr, "UID %s originator exceeds bandwith" % uid
             payload_orig = 0
 
     except ValueError:
         payload_orig = 0
 
     try:
-        payload_resp = int(f[9])
+        payload_resp = int(f[resp_bytes_idx])
 
         if duration and  payload_resp * 8 / (1024 * 1024 * duration) > 700:
             # Bandwith exceed due to Bro bug.
-            print >>sys.stderr, "%.6f responder exceeds bandwith" % time
+            print >>sys.stderr, "UID %s responder exceeds bandwith" % uid
             payload_resp = 0
 
     except ValueError:
