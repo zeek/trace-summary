@@ -437,7 +437,14 @@ States = ["OTH", "REJ", "RSTO", "RSTOS0", "RSTR", "RSTRH", "S0", "S1", "S2", "S3
 def readConnSummaries(file):
     while True:
         try:
+            lineno = 1
             for line in open(file):
+                if lineno == 1 and Options.conn_version == 0:
+                    if line[0] == "#":
+                        Options.conn_version = 2
+                    else:
+                        Options.conn_version = 1
+                lineno+=1
                 parseConnLine(line)
         except IOError, e:
             if e.errno == errno.EINTR or e.errno == errno.EAGAIN:
@@ -455,22 +462,6 @@ def parseConnLine(line):
 
     global LastOutputTime, BaseTime
 
-    ts_idx = 0
-    uid_idx = 1
-    orig_h_idx = 2
-    orig_p_idx = 3
-    resp_h_idx = 4
-    resp_p_idx = 5
-    proto_idx = 6
-    service_idx = 7
-    duration_idx = 8
-    orig_bytes_idx = 9
-    resp_bytes_idx = 10
-    conn_state_idx = 11
-    local_orig_idx = 12
-    missed_bytes_idx = 13
-    history_idx = 14
-
     if Options.sample > 0 and random.random() > Options.sample:
         return
 
@@ -480,7 +471,34 @@ def parseConnLine(line):
     if f[0] == "#":
         return
 
-    uid = f[uid_idx]
+    if Options.conn_version == 1:
+        ts_idx = 0
+        orig_h_idx = 2
+        orig_p_idx = 5
+        resp_h_idx = 3
+        resp_p_idx = 6
+        proto_idx = 7
+        service_idx = 4
+        duration_idx = 1
+        orig_bytes_idx = 8
+        resp_bytes_idx = 9
+        conn_state_idx = 10
+    elif Options.conn_version == 2:
+        ts_idx = 0
+        uid_idx = 1
+        orig_h_idx = 2
+        orig_p_idx = 3
+        resp_h_idx = 4
+        resp_p_idx = 5
+        proto_idx = 6
+        service_idx = 7
+        duration_idx = 8
+        orig_bytes_idx = 9
+        resp_bytes_idx = 10
+        conn_state_idx = 11
+        local_orig_idx = 12
+        missed_bytes_idx = 13
+        history_idx = 14
 
     if len(f) < 11: # 11 is ok for icmp
         print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
@@ -492,7 +510,7 @@ def parseConnLine(line):
         print >>sys.stderr, "Invalid starting time %s" % f[ts_idx]
         return
 
-    if f[duration_idx] != "-":
+    if f[duration_idx] != "-" and f[duration_idx] != "?":
         try:
             duration = float(f[duration_idx])
         except:
@@ -569,7 +587,10 @@ def parseConnLine(line):
 
         if duration and payload_orig * 8 / (1024 * 1024 * duration) > 700:
             # Bandwith exceed due to Bro bug.
-            print >>sys.stderr, "UID %s originator exceeds bandwith" % uid
+            if Options.conn_version == 1:
+                print >>sys.stderr, "%.6f originator exceeds bandwith" % time
+            else:
+                print >>sys.stderr, "UID %s originator exceeds bandwith" % f[uid_idx]
             payload_orig = 0
 
     except ValueError:
@@ -580,7 +601,10 @@ def parseConnLine(line):
 
         if duration and  payload_resp * 8 / (1024 * 1024 * duration) > 700:
             # Bandwith exceed due to Bro bug.
-            print >>sys.stderr, "UID %s responder exceeds bandwith" % uid
+            if Options.conn_version == 1:
+                print >>sys.stderr, "%.6f originator exceeds bandwith" % time
+            else:
+                print >>sys.stderr, "UID %s originator exceeds bandwith" % f[uid_idx]
             payload_resp = 0
 
     except ValueError:
@@ -710,6 +734,8 @@ optparser.add_option("-b", "--bytes", action="store_true", dest="bytes", default
                      help="count fractions in terms of bytes rather than packets/connections")
 optparser.add_option("-c", "--conn-summaries", action="store_true", dest="conns", default=False,
                      help="input file contains Bro connection summaries")
+optparser.add_option("--conn-version", action="store", type="int", dest="conn_version", default=0,
+                     help="when used with -c, specify '1' for use with Bro version 1.x connection logs, or '2' for use with Bro 2.x format. '0' tries to guess the format")
 optparser.add_option("-C", "--chema", action="store_true", dest="chema", default=False,
                      help="for packets: include only TCP, ignore when seq==0")
 optparser.add_option("-e", "--external", action="store_true", dest="external", default=False,
