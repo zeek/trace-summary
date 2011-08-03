@@ -12,8 +12,8 @@ import optparse
 import random
 import subprocess
 
-Version = 0.71
-
+VERSION = 0.71 # Automatically filled in.
+  
 random.seed()
 
 import SubnetTree
@@ -733,7 +733,7 @@ Ports = None
 
 ExcludeNets = SubnetTree.SubnetTree()
 
-optparser = optparse.OptionParser(usage="%prog [options] <pcap-file>|<conn-summaries>", version=Version)
+optparser = optparse.OptionParser(usage="%prog [options] <pcap-file>|<conn-summaries>", version=VERSION)
 optparser.add_option("-b", "--bytes", action="store_true", dest="bytes", default=False,
                      help="count fractions in terms of bytes rather than packets/connections")
 optparser.add_option("-c", "--conn-summaries", action="store_true", dest="conns", default=False,

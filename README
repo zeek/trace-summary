@@ -1,11 +1,12 @@
 ..	-*- mode: rst-mode -*-
 
+.. Version number is filled in automatically.
+.. |version| replace:: "0.3-7"
+
 trace-summary - Generating network traffic summaries.
 =====================================================
 
-.. |today| date::
-
-Date: |today|
+:Version: |version|
 
 .. contents::
 
