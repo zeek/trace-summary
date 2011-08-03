@@ -437,15 +437,19 @@ States = ["OTH", "REJ", "RSTO", "RSTOS0", "RSTR", "RSTRH", "S0", "S1", "S2", "S3
 def readConnSummaries(file):
     while True:
         try:
-            lineno = 1
             for line in open(file):
-                if lineno == 1 and Options.conn_version == 0:
-                    if line[0] == "#":
-                        Options.conn_version = 2
-                    else:
+                if Options.conn_version == 0 and line[0] != "#":
+                    # Guess the conn.log version by looking at the number of
+                    # fields we have.
+                    m = line.split()
+
+                    if len(m) < 15:
                         Options.conn_version = 1
-                lineno += 1
+                    else:
+                        Options.conn_version = 2
+
                 parseConnLine(line)
+
         except IOError, e:
             if e.errno == errno.EINTR or e.errno == errno.EAGAIN:
                 continue
@@ -453,7 +457,6 @@ def readConnSummaries(file):
             print >>sys.stderr, e
 
         return
-
 
 def parseConnLine(line):
     global Total
