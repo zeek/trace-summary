@@ -1,9 +1,22 @@
+
+0.71-16 | 2011-08-03 16:18:15 -0700
+
+  * Switching to new update-changes script. (Robin Sommer)
+
+
+0.71-15 | 2011-08-03 16:02:14 -0700
+
+  * trace-summary now parses both Bro 1.x and 2.x conn.log formats.
+    The default setting is to make an educated guess at the format,
+    but can be explicitly set via the new --conn-version switch. (Jon
+    Siwek)
+
 0.71-6 | 2011-03-14 17:41:05 -0700
 
   * CMake tweaks. (Jon Siwek)
 
   * Prettyfing the message about sampling being in effect.
-    
+
 0.71-3 | 2011-01-15 14:14:07 -0800
 
   * Updating update-changes. (Robin Sommer)

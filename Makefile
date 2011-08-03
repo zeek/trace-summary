@@ -1,8 +1,7 @@
 
 DISTFILES = README README.html COPYING CHANGES Makefile trace-summary
 
-VERSION=$(shell grep ^Version trace-summary | awk 'BEGIN{IFS="[= ]}"}{print $$3}')
-DISTDIR=trace-summary-$(VERSION)
+DISTDIR=trace-summary-`cat VERSION`
 
 docs: README
 	rst2html.py README >README.html

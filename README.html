@@ -16,63 +16,7 @@ Default cascading style sheet for the HTML output of Docutils.
 
 See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
 customize this style sheet.
-
-Adapted version. -Robin
-
 */
-
-body {
-  background:#ffffff;
-  padding: 20px 10px;
-  font-size: 90%;
-  font-family: sans-serif;
-  color: #505050;
-  margin: 2em 10% 2em 10%;
-  line-height: 1.4em;
-}
-
-h1, h2, h3, h4, h5, h6, div#toctitle {
-  color: #227022;
-  font-family: sans-serif;
-  margin-top: 1.2em;
-  margin-bottom: 0.5em;
-  line-height: 1.3;
-  font-weight: normal;
-  font-size: 80%;
-}
-
-h1 {
-  border-bottom: 1px solid;
-  border-color: #000000;
-}
-
-h2, h3 {
-  border-bottom: 1px solid;
-  border-color: #a0a0a0;
-}
-
-h1 { font-size: 160%; }
-h2 { font-size: 140%; }
-h3 { font-size: 120%; }
-h4 { font-size: 100%; }
-h5 { font-size: 100%; }
-h6 { font-size: 100%; }
-
-a {
-  color: #005000;
-}
-
-a:visited {
-  color: #005000;
-}
-
-a:hover {
-  color: #002000;
-}
-
-hr {
-  border: 1px solid;
-}
 
 /* used to remove borders from tables and images */
 .borderless, table.borderless td, table.borderless th {
@@ -117,10 +61,8 @@ div.abstract p.topic-title {
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-  color: #505050;
   margin: 2em ;
-  border: 1px solid;
-  background-color: #ffffee;
+  border: medium outset ;
   padding: 1em }
 
 div.admonition p.admonition-title, div.hint p.admonition-title,
@@ -174,7 +116,7 @@ div.line-block div.line-block {
 
 div.sidebar {
   margin: 0 0 0.5em 1em ;
-  border: 1px solid;
+  border: medium outset ;
   padding: 1em ;
   background-color: #ffffee ;
   width: 40% ;
@@ -183,7 +125,7 @@ div.sidebar {
 
 div.sidebar p.rubric {
   font-family: sans-serif ;
-  font-size: 1pt }
+  font-size: medium }
 
 div.system-messages {
   margin: 5em }
@@ -192,7 +134,7 @@ div.system-messages h1 {
   color: red }
 
 div.system-message {
-  border: 1px solid ;
+  border: medium outset ;
   padding: 1em }
 
 div.system-message p.system-message-title {
@@ -201,6 +143,19 @@ div.system-message p.system-message-title {
 
 div.topic {
   margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
 
 img.align-left, .figure.align-left, object.align-left {
   clear: left ;
@@ -358,7 +313,8 @@ ul.auto-toc {
 <div class="document" id="trace-summary-generating-network-traffic-summaries">
 <h1 class="title">trace-summary - Generating network traffic summaries.</h1>
 
-<p>Date: 2010-11-27</p>
+<!-- -*- mode: rst-mode -*- -->
+<p>Date: 2011-08-03</p>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
@@ -373,7 +329,7 @@ ul.auto-toc {
 </ul>
 </div>
 <div class="section" id="overview">
-<h1>Overview</h1>
+<h1><a class="toc-backref" href="#id1">Overview</a></h1>
 <p><tt class="docutils literal"><span class="pre">trace-summary</span></tt> is a Python script which generates break-downs of
 network traffic, including lists of the top hosts, protocols, ports,
 etc. Optionally, it can generate output separately for incoming vs.
@@ -416,11 +372,11 @@ the second from a Bro connection log:</p>
 </pre>
 </div>
 <div class="section" id="download">
-<h1>Download</h1>
+<h1><a class="toc-backref" href="#id2">Download</a></h1>
 <p>Download <a class="reference external" href="http://www.icir.org/robin/trace-summary-0.5.tar.gz">trace-summary-0.5.tar.gz</a></p>
 </div>
 <div class="section" id="prerequisites">
-<h1>Prerequisites</h1>
+<h1><a class="toc-backref" href="#id3">Prerequisites</a></h1>
 <ul class="simple">
 <li>This script requires Python 2.4 or newer.</li>
 <li>It also requires the installation of
@@ -429,11 +385,11 @@ the second from a Bro connection log:</p>
 </ul>
 </div>
 <div class="section" id="installation">
-<h1>Installation</h1>
+<h1><a class="toc-backref" href="#id4">Installation</a></h1>
 <p>Simply copy the script into some directory which is in your <tt class="docutils literal">PATH</tt>.</p>
 </div>
 <div class="section" id="usage">
-<h1>Usage</h1>
+<h1><a class="toc-backref" href="#id5">Usage</a></h1>
 <p>The general usage is</p>
 <blockquote>
 trace-summary [options] [input-file]</blockquote>
@@ -442,7 +398,7 @@ file. If it is a Bro connection log, use <tt class="docutils literal"><span clas
 not given, the script reads from stdin. It writes its output to
 stdout.</p>
 <div class="section" id="options">
-<h2>Options</h2>
+<h2><a class="toc-backref" href="#id6">Options</a></h2>
 <p>There are a bunch of options. The most important ones summmarized
 below. Run <tt class="docutils literal"><span class="pre">trace-summary</span> <span class="pre">\--help</span></tt> to see the full list including
 some more estoric ones.</p>
@@ -491,4 +447,3 @@ saves memory.</td>
 </div>
 </body>
 </html>
-<!--#include virtual="/robin/templates/docutils-footer.html" -->

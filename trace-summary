@@ -12,8 +12,8 @@ import optparse
 import random
 import subprocess
 
-VERSION = 0.71 # Automatically filled in.
-  
+VERSION = "0.71-16" # Automatically filled in.
+
 random.seed()
 
 import SubnetTree
