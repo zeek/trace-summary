@@ -61,16 +61,20 @@ the second from a Bro connection log::
 Download
 --------
 
-Download `trace-summary-0.5.tar.gz <http://www.icir.org/robin/trace-summary-0.5.tar.gz>`_
+Download the ``trace-summary`` git repository like::
+
+    > git clone git://git.bro-ids.org/trace-summary
+
+Or if you don't have git, the `latest snapshot <http://git.bro-ids.org/trace-summary.git/snapshot/HEAD.tar.gz>`_.
 
 Prerequisites
 -------------
 
 * This script requires Python 2.4 or newer.
-
-* It also requires the installation of
-  - the `pysubnettree <http://www.icir.org/robin/pysubnettree>`_ Python module, and
-  - Eddie Kohler's `ipsumdump <http://www.cs.ucla.edu/~kohler/ipsumdump>`_ 
+* The `pysubnettree <http://www.bro-ids.org/documentation/pysubnettree.html>`_
+  Python module
+* Eddie Kohler's `ipsumdump <http://www.cs.ucla.edu/~kohler/ipsumdump>`_
+  if using ``trace-summary`` with packet traces (versus Bro connection logs)
 
 Installation
 ------------
