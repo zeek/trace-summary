@@ -1,8 +1,14 @@
 
+0.71-19 | 2011-09-08 12:52:20 -0700
+
+  * Now ignoring all lines starting with a pound Closes #602. (Robin
+  Sommer)
+
+  * Install binaries with an RPATH (Jon Siwek)
+
 0.71-16 | 2011-08-03 16:18:15 -0700
 
   * Switching to new update-changes script. (Robin Sommer)
-
 
 0.71-15 | 2011-08-03 16:02:14 -0700
 

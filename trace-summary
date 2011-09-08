@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.71-16" # Automatically filled in.
+VERSION = "0.71-19" # Automatically filled in.
 
 random.seed()
 
@@ -468,11 +468,11 @@ def parseConnLine(line):
     if Options.sample > 0 and random.random() > Options.sample:
         return
 
-    f = line.split()
-
-    # '#' is the default log header prefix, skip lines that start with that
-    if f[0] == "#":
+    if line.startswith("#"):
+        # '#' is the default log header prefix, skip lines that start with that
         return
+
+    f = line.split()
 
     if Options.conn_version == 1:
         ts_idx = 0
