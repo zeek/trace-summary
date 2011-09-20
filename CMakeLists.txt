@@ -1,33 +1,10 @@
 project(trace-summary NONE)
 # Python is checked as a dependency below
-
-########################################################################
-## CMake Configuration
-
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-
-# Prohibit in-source builds.
-if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-    message(FATAL_ERROR "In-source CMake builds are not allowed.  CMake "
-                        "is not required to build trace-summary, you "
-                        "may choose to simply copy it to a directory in "
-                        "your PATH")
-endif ()
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-# Keep RPATH upon installing so that user doesn't have to ensure the linker
-# can find internal/private libraries or libraries external to the build
-# directory that were explicitly linked against
-if (NOT BINARY_PACKAGING_MODE)
-    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-endif ()
+include(cmake/CommonCMakeConfig.cmake)
 
 ########################################################################
 ## Dependency Configuration
-
-include(MacDependencyPaths)
 
 find_package(PythonInterp)
 
@@ -73,16 +50,4 @@ message(
     "\n================================================================\n"
 )
 
-########################################################################
-## Show warning when installing user is different from the one that configured
-
-install(CODE "
-    if (NOT $ENV{USER} STREQUAL \$ENV{USER})
-        message(STATUS \"ATTENTION: Install is being performed by user \"
-                \"'\$ENV{USER}', but the build directory was configured by \"
-                \"user '$ENV{USER}'. This may result in a permissions error \"
-                \"when writing the install manifest, but you can ignore it \"
-                \"and consider the installation as successful if you don't \"
-                \"care about the install manifest.\")
-    endif ()
-")
+include(UserChangedWarning)
