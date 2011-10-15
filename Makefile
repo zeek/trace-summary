@@ -1,16 +1,17 @@
 
-DISTFILES = README README.html COPYING CHANGES Makefile trace-summary
+DISTFILES = README COPYING CHANGES Makefile trace-summary
 
-DISTDIR=trace-summary-`cat VERSION`
+BUILD=build
+DISTDIR=trace-summary-`test -e VERSION && cat VERSION || cat ../VERSION`
 
-docs: README
-	rst2html.py README >README.html
+dist:
+	@install -d $(BUILD)
+	rm -rf $(BUILD)/$(DISTDIR)
+	mkdir $(BUILD)/$(DISTDIR)
+	cp $(DISTFILES) $(BUILD)/$(DISTDIR)
+	( cd $(BUILD) && tar czvf $(DISTDIR).tar.gz $(DISTDIR) )
+	rm -rf $(BUILD)/$(DISTDIR)
+	@echo "Package: $(BUILD)/$(DISTDIR).tar.gz"
 
-dist: docs
-	rm -rf $(DISTDIR)
-	mkdir $(DISTDIR)
-	cp $(DISTFILES) $(DISTDIR)
-	tar czvf $(DISTDIR).tgz $(DISTDIR)
-	rm -rf $(DISTDIR)
 
 

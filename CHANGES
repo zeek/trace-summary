@@ -1,8 +1,14 @@
 
+0.72 | 2011-10-18 10:18:05 -0700
+
+  * Cleaning up the distribution. (Robin Sommer)
+
+  * Updating README (Jon Siwek)
+
 0.71-19 | 2011-09-08 12:52:20 -0700
 
   * Now ignoring all lines starting with a pound Closes #602. (Robin
-  Sommer)
+    Sommer)
 
   * Install binaries with an RPATH (Jon Siwek)
 
