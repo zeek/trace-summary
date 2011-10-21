@@ -14,4 +14,4 @@ dist:
 	@echo "Package: $(BUILD)/$(DISTDIR).tar.gz"
 
 distclean:
-	git reset --hard HEAD && git clean -xdf
+	rm -rf $(BUILD)
