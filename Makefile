@@ -9,9 +9,9 @@ dist:
 	rm -rf $(BUILD)/$(DISTDIR)
 	mkdir $(BUILD)/$(DISTDIR)
 	cp $(DISTFILES) $(BUILD)/$(DISTDIR)
-	( cd $(BUILD) && tar czvf $(DISTDIR).tar.gz $(DISTDIR) )
+	( cd $(BUILD) && tar czvf $(DISTDIR).tgz $(DISTDIR) )
 	rm -rf $(BUILD)/$(DISTDIR)
-	@echo "Package: $(BUILD)/$(DISTDIR).tar.gz"
+	@echo "Package: $(BUILD)/$(DISTDIR).tgz"
 
 distclean:
 	rm -rf $(BUILD)

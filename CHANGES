@@ -1,5 +1,9 @@
 
-0.72 | 2011-10-18 10:18:05 -0700
+0.72 | 2011-10-25 17:57:00 -0700
+
+  * New make dist/distclean targets. (Jon Siwek)
+
+  * Adding executable permission back to script. (Robin Sommer)
 
   * Cleaning up the distribution. (Robin Sommer)
 
