@@ -7,7 +7,7 @@
 trace-summary - Generating network traffic summaries
 ====================================================
 
-.. class:: opening
+.. rst-class:: opening
 
     ``trace-summary`` is a Python script that generates break-downs of
     network traffic, including lists of the top hosts, protocols,
@@ -24,8 +24,8 @@ trace-summary's git repository is located at `git://git.bro-ids.org/trace-summar
 <git://git.bro-ids.org/trace-summary.git>`__. You can browse the repository
 `here <http://git.bro-ids.org/trace-summary.git>`__.
 
-This document describes trace-summary |version|. See the `CHANGES
-<{{git('trace-summary:CHANGES')}}>`__ file for version history.
+This document describes trace-summary |version|. See the ``CHANGES``
+file for version history.
 
 
 Overview
