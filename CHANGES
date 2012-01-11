@@ -1,4 +1,8 @@
 
+0.73 | 2012-01-09 16:11:02 -0800
+
+  * Submodule README conformity changes. (Jon Siwek)
+
 0.72 | 2011-10-25 17:57:00 -0700
 
   * New make dist/distclean targets. (Jon Siwek)
