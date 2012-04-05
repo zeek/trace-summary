@@ -118,8 +118,8 @@ some more estoric ones.
 :-E <file>:
     Gives a file which contains a list of networks to ignore for the
     analysis. The file must contain one network per line, where each
-    network is of the CIDR form ``a.b.c.d/mask``. Empty lines and
-    lines starting with a "#" are ignored.
+    network is of the CIDR form ``a.b.c.d/mask`` (IPv6 is also supported).
+    Empty lines and lines starting with a "#" are ignored.
 
 :-i <duration>:
     Creates totals for each time interval of the given length
