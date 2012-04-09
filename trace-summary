@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.73" # Automatically filled in.
+VERSION = "0.73-6" # Automatically filled in.
 
 random.seed()
 
@@ -218,7 +218,7 @@ class Interval:
                     try:
                         item = None
                         if dict == srcs or dict == dsts:
-                            item = socket.inet_ntoa(dict[i][1])
+                            item = inet_ntox(dict[i][1])
                             if Options.resolve:
                                 addrs += [dict[i][1]]
                                 item += "#%d" % len(addrs)
@@ -234,7 +234,7 @@ class Interval:
             if Options.resolve:
                 s += "\n        "
                 for i in range(1, len(addrs)+1):
-                    s +=  "#%d=%s  " % (i, gethostbyaddr(socket.inet_ntoa(addrs[i-1])))
+                    s +=  "#%d=%s  " % (i, gethostbyaddr(inet_ntox(addrs[i-1])))
                     if i % 3 == 0:
                         s += "\n        "
 
@@ -363,9 +363,9 @@ def readPcap(file):
         iupdate.service = ""
 
         try:
-            iupdate.src_ip = socket.inet_aton(f[1])
+            iupdate.src_ip = inet_xton(f[1])
         except socket.error:
-            iupdate.src_ip = socket.inet_aton("0.0.0.0")
+            iupdate.src_ip = unspecified_addr(f[1])
 
         if iupdate.src_ip in ExcludeNets:
             continue
@@ -376,9 +376,9 @@ def readPcap(file):
             iupdate.src_port = 0
 
         try:
-            iupdate.dst_ip = socket.inet_aton(f[2])
+            iupdate.dst_ip = inet_xton(f[2])
         except socket.error:
-            iupdate.dst_ip = socket.inet_aton("0.0.0.0")
+            iupdate.dst_ip = unspecified_addr(f[2])
 
         if iupdate.dst_ip in ExcludeNets:
             continue
@@ -560,11 +560,11 @@ def parseConnLine(line):
             bytes_resp = 0
 
         iupdate.bytes = bytes_orig + bytes_resp;
-        iupdate.src_ip = socket.inet_aton(f[orig_h_idx])
+        iupdate.src_ip = inet_xton(f[orig_h_idx])
         if iupdate.src_ip in ExcludeNets:
             return
         iupdate.src_port = int(f[orig_p_idx])
-        iupdate.dst_ip = socket.inet_aton(f[resp_h_idx])
+        iupdate.dst_ip = inet_xton(f[resp_h_idx])
         if iupdate.dst_ip in ExcludeNets:
             return
         iupdate.dst_port = int(f[resp_p_idx])
@@ -711,6 +711,31 @@ def readNetworks(file):
 
     return nets
 
+def inet_xton(ipstr):
+    family = socket.AF_INET
+
+    if ':' in ipstr:
+        family = socket.AF_INET6
+
+    return socket.inet_pton(family, ipstr)
+
+def inet_ntox(ipaddr):
+    family = socket.AF_INET
+
+    if len(ipaddr) != 4:
+        family = socket.AF_INET6
+
+    return socket.inet_ntop(family, ipaddr)
+
+def unspecified_addr(ipstr):
+    if ':' in ipstr:
+        ipaddr = inet_xton("::")
+    else:
+        ipaddr = inet_xton("0.0.0.0")
+
+    return ipaddr
+
+
 ####### Main
 
 Total = Interval()
@@ -725,13 +750,13 @@ BaseTime = None
 LastOutputTime = None
 
 LocalNets = {}
-LocalNetsIntervals = SubnetTree.SubnetTree()
+LocalNetsIntervals = SubnetTree.SubnetTree(True)
 NonLocalConns = {}
 NonLocalCount = 0
 
 Ports = None
 
-ExcludeNets = SubnetTree.SubnetTree()
+ExcludeNets = SubnetTree.SubnetTree(True)
 
 optparser = optparse.OptionParser(usage="%prog [options] <pcap-file>|<conn-summaries>", version=VERSION)
 optparser.add_option("-b", "--bytes", action="store_true", dest="bytes", default=False,
@@ -939,7 +964,7 @@ if locals:
         print "\n>== %d %s did not have any local address. Here are the first %d:\n" % (NonLocalCount, type, Options.topx)
 
         for (src,dst) in NonLocalConns.keys():
-            print "    %s <-> %s" % (socket.inet_ntoa(src), socket.inet_ntoa(dst))
+            print "    %s <-> %s" % (inet_ntox(src), inet_ntox(dst))
 
 if Options.localnets:
     print Incoming.format(conns=Options.conns, title="Incoming")

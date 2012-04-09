@@ -1,7 +1,7 @@
 ..	-*- mode: rst-mode -*-
 ..
 .. Version number is filled in automatically.
-.. |version| replace:: 0.73
+.. |version| replace:: 0.73-6
 
 ====================================================
 trace-summary - Generating network traffic summaries
@@ -118,8 +118,9 @@ some more estoric ones.
 :-E <file>:
     Gives a file which contains a list of networks to ignore for the
     analysis. The file must contain one network per line, where each
-    network is of the CIDR form ``a.b.c.d/mask``. Empty lines and
-    lines starting with a "#" are ignored.
+    network is of the CIDR form ``a.b.c.d/mask`` (including the
+    corresponding syntax for IPv6 prefixes, e.g., ``1:2:3:4::/64``).
+    Empty lines and lines starting with a "#" are ignored.
 
 :-i <duration>:
     Creates totals for each time interval of the given length

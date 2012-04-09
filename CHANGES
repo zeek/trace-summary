@@ -1,4 +1,11 @@
 
+0.73-6 | 2012-04-09 15:56:17 -0700
+
+  * trace-summary now works with IPv6 traffic. It needs a current
+    pysubnettree for that. (Daniel Thayer)
+
+  * Raise minimum required CMake version to 2.6.3. (Jon Siwek)
+    
 0.73 | 2012-01-09 16:11:02 -0800
 
   * Submodule README conformity changes. (Jon Siwek)
