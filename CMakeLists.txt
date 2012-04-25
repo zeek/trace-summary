@@ -45,7 +45,7 @@ install(PROGRAMS trace-summary DESTINATION bin)
 message(
     "\n=============|  trace-summary Install Summary  |================"
     "\n"
-    "\nInstall desination:    ${CMAKE_INSTALL_PREFIX}/bin"
+    "\nInstall destination:    ${CMAKE_INSTALL_PREFIX}/bin"
     "\n"
     "\n================================================================\n"
 )
