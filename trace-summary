@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.73-6" # Automatically filled in.
+VERSION = "0.73-9" # Automatically filled in.
 
 random.seed()
 
@@ -590,11 +590,11 @@ def parseConnLine(line):
         payload_orig = int(f[orig_bytes_idx])
 
         if duration and payload_orig * 8 / (1024 * 1024 * duration) > 700:
-            # Bandwith exceed due to Bro bug.
+            # Bandwidth exceed due to Bro bug.
             if Options.conn_version == 1:
-                print >>sys.stderr, "%.6f originator exceeds bandwith" % time
+                print >>sys.stderr, "%.6f originator exceeds bandwidth" % time
             else:
-                print >>sys.stderr, "UID %s originator exceeds bandwith" % f[uid_idx]
+                print >>sys.stderr, "UID %s originator exceeds bandwidth" % f[uid_idx]
             payload_orig = 0
 
     except ValueError:
@@ -604,11 +604,11 @@ def parseConnLine(line):
         payload_resp = int(f[resp_bytes_idx])
 
         if duration and  payload_resp * 8 / (1024 * 1024 * duration) > 700:
-            # Bandwith exceed due to Bro bug.
+            # Bandwidth exceed due to Bro bug.
             if Options.conn_version == 1:
-                print >>sys.stderr, "%.6f originator exceeds bandwith" % time
+                print >>sys.stderr, "%.6f originator exceeds bandwidth" % time
             else:
-                print >>sys.stderr, "UID %s originator exceeds bandwith" % f[uid_idx]
+                print >>sys.stderr, "UID %s originator exceeds bandwidth" % f[uid_idx]
             payload_resp = 0
 
     except ValueError:

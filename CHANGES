@@ -1,4 +1,8 @@
 
+0.73-9 | 2012-05-03 11:36:27 -0700
+
+  * Fix typos. (Daniel Thayer)
+
 0.73-6 | 2012-04-09 15:56:17 -0700
 
   * trace-summary now works with IPv6 traffic. It needs a current

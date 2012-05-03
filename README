@@ -1,7 +1,7 @@
 ..	-*- mode: rst-mode -*-
 ..
 .. Version number is filled in automatically.
-.. |version| replace:: 0.73-6
+.. |version| replace:: 0.73-9
 
 ====================================================
 trace-summary - Generating network traffic summaries
@@ -34,7 +34,7 @@ Overview
 The ``trace-summary`` script reads both packet traces in `libpcap
 <http://www.tcpdump.org>`_ format and connection logs produced by the
 `Bro <http://www.bro-ids.org>`_ network intrusion detection system
-(for the latter, it support both 1.x and 2.x output formats).
+(for the latter, it supports both 1.x and 2.x output formats).
 
 Here are two example outputs in the most basic form (note that IP
 addresses are 'anonymized'). The first is from a packet trace and the
@@ -103,9 +103,9 @@ stdout.
 Options
 ~~~~~~~
 
-There are a bunch of options. The most important ones summmarized
-below. Run ``trace-summary \--help`` to see the full list including
-some more estoric ones.
+The most important options are summarized
+below. Run ``trace-summary --help`` to see the full list including
+some more esoteric ones.
 
 :-c:
     Input is a Bro connection log instead of a ``libpcap`` trace
