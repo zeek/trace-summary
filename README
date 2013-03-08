@@ -18,11 +18,11 @@ Download
 --------
 
 You can find the latest trace-summary release for download at
-http://www.bro-ids.org/download.
+http://www.bro.org/download.
 
-trace-summary's git repository is located at `git://git.bro-ids.org/trace-summary.git
-<git://git.bro-ids.org/trace-summary.git>`__. You can browse the repository
-`here <http://git.bro-ids.org/trace-summary.git>`__.
+trace-summary's git repository is located at `git://git.bro.org/trace-summary.git
+<git://git.bro.org/trace-summary.git>`__. You can browse the repository
+`here <http://git.bro.org/trace-summary.git>`__.
 
 This document describes trace-summary |version|. See the ``CHANGES``
 file for version history.
@@ -33,7 +33,7 @@ Overview
 
 The ``trace-summary`` script reads both packet traces in `libpcap
 <http://www.tcpdump.org>`_ format and connection logs produced by the
-`Bro <http://www.bro-ids.org>`_ network intrusion detection system
+`Bro <http://www.bro.org>`_ network intrusion detection system
 (for the latter, it supports both 1.x and 2.x output formats).
 
 Here are two example outputs in the most basic form (note that IP
@@ -77,7 +77,7 @@ Prerequisites
 * This script requires Python 2.4 or newer.
 
 * The `pysubnettree
-  <http://www.bro-ids.org/documentation/pysubnettree.html>`_ Python
+  <http://www.bro.org/documentation/pysubnettree.html>`_ Python
   module.
 
 * Eddie Kohler's `ipsumdump <http://www.cs.ucla.edu/~kohler/ipsumdump>`_
