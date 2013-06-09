@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.73-9" # Automatically filled in.
+VERSION = "0.8-7" # Automatically filled in.
 
 random.seed()
 
@@ -338,7 +338,7 @@ def readPcap(file):
             continue
 
         if Options.sample > 0 and random.random() > Options.sample:
-            return
+            continue
 
         f = line.split()
         time = float(f[0])
