@@ -38,6 +38,7 @@ endif ()
 ## Install Files
 
 install(PROGRAMS trace-summary DESTINATION bin)
+install(FILES trace-summary.1 DESTINATION ${BRO_MAN_INSTALL_PATH}/man1)
 
 ########################################################################
 ## Build Summary
