@@ -4,23 +4,20 @@
 trace-summary \- generate network traffic summaries
 .SH SYNOPSIS
 .B trace-summary
-[\fI\,options\/\fR] \fI\,<pcap-file>|<conn-summaries>\/\fR
+[\fI\,options\/\fR] [\fI\,input-file\/\fR]
 .SH DESCRIPTION
-This manual page documents briefly the
-.B trace-summary
-program.
-.PP
 .\" TeX users may be more comfortable with the \fB<whatever>\fP and
 .\" \fI<whatever>\fP escape sequences to invode bold face and italics,
 .\" respectively.
-\fBtrace-summary\fP is a Python script that generates break-downs of
+\fBtrace-summary\fP generates break-downs of
 network traffic, including lists of the top hosts, protocols, ports,
 etc. Optionally, it can generate output separately for incoming
 vs. outgoing traffic, per subnet, and per time-interval.
 
 Per default, it assumes the
 .IR input-file
-to be a libpcap trace file. If it is a Bro connection log, use \fB\-c\fR. If
+to be a libpcap trace file. However, if it is a Bro connection log,
+use \fB\-c\fR. If
 .IR input-file
 is not given, the script reads from stdin. It writes its output to stdout.
 .SH OPTIONS
@@ -49,34 +46,34 @@ for packets: include only TCP, ignore when seq==0
 \fB\-e\fR, \fB\-\-external\fR
 ignore strictly internal traffic
 .TP
-\fB\-E\fR EXCLUDENETS, \fB\-\-exclude\-nets\fR=\fI\,EXCLUDENETS\/\fR
+\fB\-E\fR \fIEXCLUDENETS\fR, \fB\-\-exclude\-nets\fR=\fI\,EXCLUDENETS\/\fR
 excludes CIDRs in file from analysis
 .TP
-\fB\-i\fR ILEN, \fB\-\-intervals\fR=\fI\,ILEN\/\fR
+\fB\-i\fR \fIILEN\fR, \fB\-\-intervals\fR=\fI\,ILEN\/\fR
 create summaries for time intervals of given length
 .TP
-\fB\-l\fR LOCALNETS, \fB\-\-local\-nets\fR=\fI\,LOCALNETS\/\fR
+\fB\-l\fR \fILOCALNETS\fR, \fB\-\-local\-nets\fR=\fI\,LOCALNETS\/\fR
 differentiate in/out based on CIDRs in file
 .TP
-\fB\-n\fR TOPX, \fB\-\-topn\fR=\fI\,TOPX\/\fR
+\fB\-n\fR \fITOPX\fR, \fB\-\-topn\fR=\fI\,TOPX\/\fR
 show top <n>
 .TP
-\fB\-p\fR PORTS, \fB\-\-ports\fR=\fI\,PORTS\/\fR
+\fB\-p\fR \fIPORTS\fR, \fB\-\-ports\fR=\fI\,PORTS\/\fR
 include only ports listed in file
 .TP
-\fB\-P\fR STOREPORTS, \fB\-\-write\-ports\fR=\fI\,STOREPORTS\/\fR
+\fB\-P\fR \fISTOREPORTS\fR, \fB\-\-write\-ports\fR=\fI\,STOREPORTS\/\fR
 write top total/incoming/outgoing ports into files
 .TP
 \fB\-r\fR, \fB\-\-resolve\-host\-names\fR
 resolve host names
 .TP
-\fB\-R\fR tag, \fB\-\-R\fR=\fI\,tag\/\fR
+\fB\-R\fR \fItag\fR, \fB\-\-R\fR=\fI\,tag\/\fR
 write output suitable for R into files <tag.*>
 .TP
-\fB\-s\fR FACTOR, \fB\-\-sample\-factor\fR=\fI\,FACTOR\/\fR
+\fB\-s\fR \fIFACTOR\fR, \fB\-\-sample\-factor\fR=\fI\,FACTOR\/\fR
 sample factor of input
 .TP
-\fB\-S\fR SAMPLE, \fB\-\-do\-sample\fR=\fI\,SAMPLE\/\fR
+\fB\-S\fR \fISAMPLE\fR, \fB\-\-do\-sample\fR=\fI\,SAMPLE\/\fR
 sample input with probability (0.0 < prob < 1.0)
 .TP
 \fB\-m\fR, \fB\-\-save\-mem\fR
@@ -88,17 +85,14 @@ include only TCP
 \fB\-u\fR, \fB\-\-udp\fR
 include only UDP
 .TP
-\fB\-U\fR MINTIME, \fB\-\-min\-time\fR=\fI\,MINTIME\/\fR
+\fB\-U\fR \fIMINTIME\fR, \fB\-\-min\-time\fR=\fI\,MINTIME\/\fR
 minimum time in ISO format (e.g. 2005\-12\-31\-23\-59\-00)
 .TP
 \fB\-v\fR, \fB\-\-verbose\fR
 show top\-n for every interval
 .TP
-\fB\-V\fR MAXTIME, \fB\-\-max\-time\fR=\fI\,MAXTIME\/\fR
+\fB\-V\fR \fIMAXTIME\fR, \fB\-\-max\-time\fR=\fI\,MAXTIME\/\fR
 maximum time in ISO format
 .SH AUTHOR
 .B trace-summary
 was written by The Bro Project <info@bro.org>.
-.PP
-This manual page was written by Raúl Benencia <rul@kalgan.cc> for the
-Debian project (but may be used by others).
