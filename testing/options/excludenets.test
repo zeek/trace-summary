@@ -1,0 +1,7 @@
+# Test the -E (exclude-nets) option.
+#
+# @TEST-EXEC: trace-summary -E $FILES/localnet.txt -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -E $FILES/localnet.txt $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out

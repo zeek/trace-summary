@@ -1,0 +1,5 @@
+# Test the -c (conn-summaries) option.
+#
+# @TEST-EXEC: trace-summary -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+

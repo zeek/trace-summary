@@ -1,0 +1,7 @@
+# Test the -u (udp) option.
+#
+# @TEST-EXEC: trace-summary -u -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -u $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out

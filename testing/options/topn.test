@@ -1,0 +1,7 @@
+# Test the -n (topn) option.
+#
+# @TEST-EXEC: trace-summary -n 3 -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -n 3 $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out

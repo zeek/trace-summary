@@ -1,0 +1,7 @@
+# Test the -m (save-mem) option.
+#
+# @TEST-EXEC: trace-summary -m -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -m $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out

@@ -1,0 +1,5 @@
+# Test with a pcap file (and no other options).
+#
+# @TEST-EXEC: trace-summary $FILES/wikipedia.trace > out
+# @TEST-EXEC: btest-diff out
+

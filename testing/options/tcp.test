@@ -1,0 +1,7 @@
+# Test the -t (tcp) option.
+#
+# @TEST-EXEC: trace-summary -t -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -t $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out
