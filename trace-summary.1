@@ -50,7 +50,8 @@ ignore strictly internal traffic
 excludes CIDRs in file from analysis
 .TP
 \fB\-i\fR \fIILEN\fR, \fB\-\-intervals\fR=\fI\,ILEN\/\fR
-create summaries for time intervals of given length
+create summaries for time intervals of given length (seconds, or use suffix
+of 'h' for hours, or 'm' for minutes)
 .TP
 \fB\-l\fR \fILOCALNETS\fR, \fB\-\-local\-nets\fR=\fI\,LOCALNETS\/\fR
 differentiate in/out based on CIDRs in file
@@ -62,7 +63,7 @@ show top <n>
 include only ports listed in file
 .TP
 \fB\-P\fR \fISTOREPORTS\fR, \fB\-\-write\-ports\fR=\fI\,STOREPORTS\/\fR
-write top total/incoming/outgoing ports into files
+write top total/incoming/outgoing ports into file
 .TP
 \fB\-r\fR, \fB\-\-resolve\-host\-names\fR
 resolve host names
