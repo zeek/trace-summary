@@ -1,4 +1,8 @@
 
+0.83-9 | 2014-12-08 13:54:39 -0800
+
+  * Add man page for trace-summary. (Raúl Benencia)
+
 0.83 | 2014-04-03 15:53:51 -0700
 
   * Release 0.83
@@ -21,7 +25,7 @@
     pysubnettree for that. (Daniel Thayer)
 
   * Raise minimum required CMake version to 2.6.3. (Jon Siwek)
-    
+
 0.73 | 2012-01-09 16:11:02 -0800
 
   * Submodule README conformity changes. (Jon Siwek)
