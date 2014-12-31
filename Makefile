@@ -15,3 +15,6 @@ dist:
 
 distclean:
 	rm -rf $(BUILD)
+
+test:
+	@make -C testing

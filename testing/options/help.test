@@ -1,0 +1,5 @@
+# Test the -h (help) option.
+#
+# @TEST-EXEC: trace-summary -h > out
+# @TEST-EXEC: test -s out
+

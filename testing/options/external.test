@@ -1,0 +1,7 @@
+# Test the -e (external) option.
+#
+# @TEST-EXEC: trace-summary -e -l $FILES/localnet.txt -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -e -l $FILES/localnet.txt $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out

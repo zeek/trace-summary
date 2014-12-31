@@ -1,0 +1,6 @@
+# Test the -C (chema) option.  This option does nothing when conn.log is used.
+#
+
+# @TEST-EXEC: trace-summary -C $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out
+

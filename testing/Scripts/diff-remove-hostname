@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+#
+# Replace hostnames that occur after text such as "#2=".
+
+sed 's/\(#[0-9]\+=\)[0-9a-zA-Z.-]\+/\1<???>/g'
+

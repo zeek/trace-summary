@@ -1,0 +1,8 @@
+# Test the -S (do-sample) option.  The results are somewhat random, so no
+# baselines.
+#
+# @TEST-EXEC: trace-summary -S .33 -c $FILES/conn.log > out
+# @TEST-EXEC: grep First out
+
+# @TEST-EXEC: trace-summary -S .33 $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: grep First pcap.out

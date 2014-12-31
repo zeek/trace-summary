@@ -1,0 +1,7 @@
+# Test the -p (ports) option.
+#
+# @TEST-EXEC: trace-summary -p $FILES/port.txt -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -p $FILES/port.txt $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out

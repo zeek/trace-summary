@@ -1,0 +1,5 @@
+# Test the --conn-version option.
+#
+# @TEST-EXEC: trace-summary --conn-version 2 -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+

@@ -7,7 +7,6 @@ import socket
 import signal
 import posix
 import errno
-import resource
 import optparse
 import random
 import subprocess
@@ -48,6 +47,8 @@ class IntervalList:
                 empty.end = next_start + Options.ilen
                 empty.formatForR(file, top_ports)
                 next_start = empty.end
+
+        file.close()
 
 class Interval:
     def __init__(self):
@@ -202,9 +203,9 @@ class Interval:
 
             if conns:
                 s += " States        |"
-                states = (topx(self.states),6)
+                states = (topx(self.states), 6)
             else:
-                states = ({},0)
+                states = ({}, 0)
 
             s += "\n"
 
@@ -214,7 +215,7 @@ class Interval:
 
                 s += "     "
 
-                for (dict, length) in ((ports, 5), (srcs, 18), (dsts, 18), (servs,11), (prots,2), states):
+                for (dict, length) in ((ports, 5), (srcs, 18), (dsts, 18), (servs, 11), (prots, 2), states):
                     try:
                         item = None
                         if dict == srcs or dict == dsts:
@@ -295,7 +296,7 @@ def findInterval(time, intervals):
 
         if float(idx) != i:
             # minus 1 since we will multiply by -1
-            idx = idx - 1
+            idx -= 1
 
         idx *= -1
 
@@ -332,7 +333,9 @@ def readPcap(file):
     global Incoming
     global Outgoing
 
-    for line in subprocess.Popen("ipsumdump -r %s --timestamp --src --dst --sport --dport --length --protocol --fragment --payload-length -Q" % file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout:
+    proc = subprocess.Popen("ipsumdump -r %s --timestamp --src --dst --sport --dport --length --protocol --fragment --payload-length -Q" % file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    for line in proc.stdout:
 
         if line.startswith("!"):
             continue
@@ -341,7 +344,16 @@ def readPcap(file):
             continue
 
         f = line.split()
-        time = float(f[0])
+
+        if len(f) < 10:
+            print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
+            continue
+
+        try:
+            time = float(f[0])
+        except ValueError:
+            print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
+            continue
 
         if time < Options.mintime or time > Options.maxtime:
             continue
@@ -430,6 +442,11 @@ def readPcap(file):
                     NonLocalCount += 1
                     if NonLocalCount < Options.topx:
                         NonLocalConns[(iupdate.src_ip, iupdate.dst_ip)] = 1
+
+    status = proc.wait()
+    if status != 0:
+        print >>sys.stderr, "ipsumdump returned exit status of %d" % status
+
 
 Protocols = { "T": 6, "tcp": 6, "U": 17, "udp": 17, "I": 1, "icmp": 1 }
 States = ["OTH", "REJ", "RSTO", "RSTOS0", "RSTR", "RSTRH", "S0", "S1", "S2", "S3", "SF", "SH", "SHR"]
@@ -559,7 +576,7 @@ def parseConnLine(line):
         except:
             bytes_resp = 0
 
-        iupdate.bytes = bytes_orig + bytes_resp;
+        iupdate.bytes = bytes_orig + bytes_resp
         iupdate.src_ip = inet_xton(f[orig_h_idx])
         if iupdate.src_ip in ExcludeNets:
             return
@@ -687,7 +704,7 @@ def gethostbyaddr( ip, timeout = 5, default = "<???>" ):
 
     os.close( pin )
 
-    Cache[ip] = host;
+    Cache[ip] = host
 
     return host
 
@@ -772,7 +789,7 @@ optparser.add_option("-e", "--external", action="store_true", dest="external", d
 optparser.add_option("-E", "--exclude-nets", action="store", type="string", dest="excludenets", default=None,
                      help="excludes CIDRs in file from analysis")
 optparser.add_option("-i", "--intervals", action="store", type="string", dest="ilen", default="0",
-                     help="create summaries for time intervals of given length")
+                     help="create summaries for time intervals of given length (seconds, or use suffix of 'h' for hours, or 'm' for minutes)")
 optparser.add_option("-l", "--local-nets", action="store", type="string", dest="localnets", default=None,
                      help="differentiate in/out based on CIDRs in file")
 optparser.add_option("-n", "--topn", action="store", type="int", dest="topx", default=10,
@@ -780,7 +797,7 @@ optparser.add_option("-n", "--topn", action="store", type="int", dest="topx", de
 optparser.add_option("-p", "--ports", action="store", type="string", dest="ports", default=None,
                      help="include only ports listed in file")
 optparser.add_option("-P", "--write-ports", action="store", type="string", dest="storeports", default=None,
-                     help="write top total/incoming/outgoing ports into files ")
+                     help="write top total/incoming/outgoing ports into file")
 optparser.add_option("-r", "--resolve-host-names", action="store_true", dest="resolve", default=False,
                      help="resolve host names")
 optparser.add_option("-R", "--R", action="store", type="string", dest="R", default=None, metavar="tag",
@@ -816,6 +833,10 @@ if Options.external and not Options.localnets:
     print >>sys.stderr, "Need -l for -e."
     sys.exit(1)
 
+if Options.topx < 0:
+    print >>sys.stderr, "Top-n value cannot be negative"
+    sys.exit(1)
+
 # If reading pcap traces, then ipsumdump is required.
 if not Options.conns:
     proc = subprocess.Popen("ipsumdump -v", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -831,6 +852,11 @@ if Options.ilen:
         Options.ilen = int(Options.ilen[:-1]) * 60 * 60
     else:
         Options.ilen = int(Options.ilen)
+
+    if Options.ilen < 0:
+        print >>sys.stderr, "Interval length cannot be negative"
+        sys.exit(1)
+
 
 # Read local networks.
 if Options.localnets:
@@ -868,7 +894,14 @@ if Options.maxtime:
 else:
     Options.maxtime = 1e20
 
+if Options.factor <= 0:
+    print >>sys.stderr, "Sample factor must be > 0"
+    sys.exit(1)
+
 if Options.sample > 0:
+    if Options.sample > 1.0:
+        print >>sys.stderr, "Sample probability cannot be > 1"
+        sys.exit(1)
     Options.factor = 1.0 / Options.sample
 
 if file == "-":
@@ -900,6 +933,7 @@ if Options.storeports:
     f = open(Options.storeports, "w")
     for p in top_ports:
         print >>f, p[1]
+    f.close()
 
 if Options.R:
     file = open(Options.R + ".dat", "w")
@@ -924,6 +958,8 @@ if Options.R:
             i.end += TotalIntervals.start
             i.applySampleFactor()
             i.formatForR(file, top_ports)
+
+    file.close()
 
     TotalIntervals.writeR(Options.R + ".total.dat", top_ports)
     IncomingIntervals.writeR(Options.R + ".incoming.dat", top_ports)

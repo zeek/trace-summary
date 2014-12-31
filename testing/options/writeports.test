@@ -1,0 +1,7 @@
+# Test the -P (write-ports) option.
+#
+# @TEST-EXEC: trace-summary -P myports.txt -c $FILES/conn.log
+# @TEST-EXEC: btest-diff myports.txt
+
+# @TEST-EXEC: trace-summary -P myportspcap.txt $FILES/wikipedia.trace
+# @TEST-EXEC: btest-diff myportspcap.txt

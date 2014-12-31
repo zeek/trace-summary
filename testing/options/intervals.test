@@ -1,0 +1,7 @@
+# Test the -i (intervals) option.
+#
+# @TEST-EXEC: trace-summary -i 2 -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -i 2 $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out

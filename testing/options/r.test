@@ -1,0 +1,13 @@
+# Test the -R option.
+#
+# @TEST-EXEC: trace-summary -R mytest -c $FILES/conn.log
+# @TEST-EXEC: btest-diff mytest.dat
+# @TEST-EXEC: btest-diff mytest.incoming.dat
+# @TEST-EXEC: btest-diff mytest.outgoing.dat
+# @TEST-EXEC: btest-diff mytest.total.dat
+
+# @TEST-EXEC: trace-summary -R mytestpcap $FILES/wikipedia.trace
+# @TEST-EXEC: btest-diff mytestpcap.dat
+# @TEST-EXEC: btest-diff mytestpcap.incoming.dat
+# @TEST-EXEC: btest-diff mytestpcap.outgoing.dat
+# @TEST-EXEC: btest-diff mytestpcap.total.dat

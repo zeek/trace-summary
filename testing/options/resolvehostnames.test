@@ -1,0 +1,5 @@
+# Test the -r (resolve-host-names) option.
+#
+# @TEST-EXEC: trace-summary -r -c $FILES/conn2.log > out
+# @TEST-EXEC: TEST_DIFF_CANONIFIER=$SCRIPTS/diff-remove-hostnames btest-diff out
+

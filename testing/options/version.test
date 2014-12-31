@@ -1,0 +1,5 @@
+# Test the --version option.
+#
+# @TEST-EXEC: trace-summary --version > out
+# @TEST-EXEC: test -s out
+

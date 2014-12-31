@@ -1,0 +1,7 @@
+# Test the -V (max-time) option.
+#
+# @TEST-EXEC: trace-summary -V "2011-03-18-14-06-09" -c $FILES/conn.log > out
+# @TEST-EXEC: btest-diff out
+
+# @TEST-EXEC: trace-summary -V "2011-03-18-14-06-09" $FILES/wikipedia.trace > pcap.out
+# @TEST-EXEC: btest-diff pcap.out
