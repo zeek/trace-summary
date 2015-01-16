@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 import os
 import time
 import sys
@@ -245,26 +246,26 @@ class Interval:
         return s
 
     def makeRHeader(f, top_ports):
-        print >>f, "start end count bytes payload frags srcs dsts prot.tcp prot.udp prot.icmp",
-        print >>f, " ".join(["state.%s" % s.lower() for s in States]),
-        print >>f, " ".join(["top.port.%d" % (i+1) for i in range(0,Options.topx)]),
-        print >>f, " ".join(["port.%d" % i for i in range(0,1024)]),
+        f.write("start end count bytes payload frags srcs dsts prot.tcp prot.udp prot.icmp ")
+        f.write("%s " % " ".join(["state.%s" % s.lower() for s in States]))
+        f.write("%s " % " ".join(["top.port.%d" % (i+1) for i in range(0,Options.topx)]))
+        f.write(" ".join(["port.%d" % i for i in range(0,1024)]))
         if not Options.save_mem:
-            print >>f, " ".join(["port.%d" % p[1] for p in top_ports if p[1] >= 1024]),
-        print >>f
+            f.write(" %s" % " ".join(["port.%d" % p[1] for p in top_ports if p[1] >= 1024]))
+        f.write("\n")
 
     makeRHeader = staticmethod(makeRHeader)
 
     def formatForR(self, f, top_ports):
-        print >>f, self.start, self.end, self.pkts, self.bytes, self.payload, self.frags,
-        print >>f, len(self.srcs), len(self.dsts),
-        print >>f, self.prots.get(6, 0), self.prots.get(17, 0), self.prots.get(1, 0),
-        print >>f, " ".join([str(self.states.get(i, 0)) for i in States]),
-        print >>f, " ".join([str(p[1]) for p in topx(self.ports, True)]),
-        print >>f, " ".join([str(self.ports.get(i, 0)) for i in range(0,1024)]),
+        f.write("%.16g %.16g %s %s %s %s " % (self.start, self.end, self.pkts, self.bytes, self.payload, self.frags))
+        f.write("%s %s " % (len(self.srcs), len(self.dsts)))
+        f.write("%s %s %s " % (self.prots.get(6, 0), self.prots.get(17, 0), self.prots.get(1, 0)))
+        f.write("%s " % " ".join([str(self.states.get(i, 0)) for i in States]))
+        f.write("%s " % " ".join([str(p[1]) for p in topx(self.ports, True)]))
+        f.write(" ".join([str(self.ports.get(i, 0)) for i in range(0,1024)]))
         if not Options.save_mem:
-            print >>f, " ".join([str(self.ports.get(p[1], 0)) for p in top_ports if p[1] >= 1024]),
-        print >>f
+            f.write(" %s" % " ".join([str(self.ports.get(p[1], 0)) for p in top_ports if p[1] >= 1024]))
+        f.write("\n")
 
 
     def __str__(self):
@@ -346,13 +347,13 @@ def readPcap(file):
         f = line.split()
 
         if len(f) < 10:
-            print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
+            print("Ignoring corrupt line: '%s'" % line.strip(), file=sys.stderr)
             continue
 
         try:
             time = float(f[0])
         except ValueError:
-            print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
+            print("Ignoring corrupt line: '%s'" % line.strip(), file=sys.stderr)
             continue
 
         if time < Options.mintime or time > Options.maxtime:
@@ -445,7 +446,7 @@ def readPcap(file):
 
     status = proc.wait()
     if status != 0:
-        print >>sys.stderr, "ipsumdump returned exit status of %d" % status
+        print("ipsumdump returned exit status of %d" % status, file=sys.stderr)
 
 
 Protocols = { "T": 6, "tcp": 6, "U": 17, "udp": 17, "I": 1, "icmp": 1 }
@@ -471,7 +472,7 @@ def readConnSummaries(file):
             if e.errno == errno.EINTR or e.errno == errno.EAGAIN:
                 continue
 
-            print >>sys.stderr, e
+            print(e, file=sys.stderr)
 
         return
 
@@ -522,13 +523,13 @@ def parseConnLine(line):
         history_idx = 14
 
     if len(f) < 11: # 11 is ok for icmp
-        print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
+        print("Ignoring corrupt line: '%s'" % line.strip(), file=sys.stderr)
         return
 
     try:
         time = float(f[ts_idx])
     except ValueError:
-        print >>sys.stderr, "Invalid starting time %s" % f[ts_idx]
+        print("Invalid starting time %s" % f[ts_idx], file=sys.stderr)
         return
 
     if f[duration_idx] != "-" and f[duration_idx] != "?":
@@ -540,7 +541,7 @@ def parseConnLine(line):
             # to that or because we're looking at the wrong column entirely,
             # so just print an error and continue with the assumption of
             # an unset/empty duration column.
-            print >>sys.stderr, "Invalid duration %s" % f[duration_idx]
+            print("Invalid duration %s" % f[duration_idx], file=sys.stderr)
             duration = 0
     else:
         duration = 0
@@ -559,7 +560,7 @@ def parseConnLine(line):
         LastOutputTime = time
 
     if time - LastOutputTime > 3600:
-        # print >>sys.stderr, "%d hours processed" % int((time - BaseTime) / 3600)
+        # print("%d hours processed" % int((time - BaseTime) / 3600), file=sys.stderr)
         LastOutputTime = time
 
     try:
@@ -595,7 +596,7 @@ def parseConnLine(line):
         iupdate.start = time
 
     except LookupError:
-        print >>sys.stderr, "Ignoring corrupt line: '%s'" % line.strip()
+        print("Ignoring corrupt line: '%s'" % line.strip(), file=sys.stderr)
         return
 
     try:
@@ -609,9 +610,9 @@ def parseConnLine(line):
         if duration and payload_orig * 8 / (1024 * 1024 * duration) > 700:
             # Bandwidth exceed due to Bro bug.
             if Options.conn_version == 1:
-                print >>sys.stderr, "%.6f originator exceeds bandwidth" % time
+                print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
             else:
-                print >>sys.stderr, "UID %s originator exceeds bandwidth" % f[uid_idx]
+                print("UID %s originator exceeds bandwidth" % f[uid_idx], file=sys.stderr)
             payload_orig = 0
 
     except ValueError:
@@ -623,9 +624,9 @@ def parseConnLine(line):
         if duration and  payload_resp * 8 / (1024 * 1024 * duration) > 700:
             # Bandwidth exceed due to Bro bug.
             if Options.conn_version == 1:
-                print >>sys.stderr, "%.6f originator exceeds bandwidth" % time
+                print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
             else:
-                print >>sys.stderr, "UID %s originator exceeds bandwidth" % f[uid_idx]
+                print("UID %s originator exceeds bandwidth" % f[uid_idx], file=sys.stderr)
             payload_resp = 0
 
     except ValueError:
@@ -836,18 +837,18 @@ if len(args) > 0:
     file = args[0]
 
 if Options.external and not Options.localnets:
-    print >>sys.stderr, "Need -l for -e."
+    print("Need -l for -e.", file=sys.stderr)
     sys.exit(1)
 
 if Options.topx < 0:
-    print >>sys.stderr, "Top-n value cannot be negative"
+    print("Top-n value cannot be negative", file=sys.stderr)
     sys.exit(1)
 
 # If reading pcap traces, then ipsumdump is required.
 if not Options.conns:
     proc = subprocess.Popen("ipsumdump -v", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     if proc.wait() != 0:
-        print >>sys.stderr, "Can't read pcap trace: 'ipsumdump' is required."
+        print("Can't read pcap trace: 'ipsumdump' is required.", file=sys.stderr)
         sys.exit(1)
 
 # Make per-interval summaries.
@@ -860,7 +861,7 @@ if Options.ilen:
         Options.ilen = int(Options.ilen)
 
     if Options.ilen < 0:
-        print >>sys.stderr, "Interval length cannot be negative"
+        print("Interval length cannot be negative", file=sys.stderr)
         sys.exit(1)
 
 
@@ -873,7 +874,7 @@ if Options.localnets:
             LocalNetsIntervals[net] = i
             LocalNets[net] = (txt, i)
         except KeyError:
-            print >>sys.stderr, "Can't parse local network '%s'" % net
+            print("Can't parse local network '%s'" % net, file=sys.stderr)
 
 # Read networks to exclude.
 if Options.excludenets:
@@ -881,7 +882,7 @@ if Options.excludenets:
         try:
             ExcludeNets[net] = txt
         except KeyError:
-            print >>sys.stderr, "Can't parse exclude network '%s'" % net
+            print("Can't parse exclude network '%s'" % net, file=sys.stderr)
 
 # Read ports file.
 if Options.ports:
@@ -901,12 +902,12 @@ else:
     Options.maxtime = 1e20
 
 if Options.factor <= 0:
-    print >>sys.stderr, "Sample factor must be > 0"
+    print("Sample factor must be > 0", file=sys.stderr)
     sys.exit(1)
 
 if Options.sample > 0:
     if Options.sample > 1.0:
-        print >>sys.stderr, "Sample probability cannot be > 1"
+        print("Sample probability cannot be > 1", file=sys.stderr)
         sys.exit(1)
     Options.factor = 1.0 / Options.sample
 
@@ -938,20 +939,20 @@ top_ports = unique.values()
 if Options.storeports:
     f = open(Options.storeports, "w")
     for p in top_ports:
-        print >>f, p[1]
+        f.write("%s\n" % p[1])
     f.close()
 
 if Options.R:
     file = open(Options.R + ".dat", "w")
 
-    print >>file, "tag",
+    file.write("tag ")
     Interval.makeRHeader(file, top_ports)
-    print >>file, "total",
+    file.write("total ")
     Total.formatForR(file, top_ports)
 
-    print >>file, "incoming",
+    file.write("incoming ")
     Incoming.formatForR(file, top_ports)
-    print >>file, "outgoing",
+    file.write("outgoing ")
     Outgoing.formatForR(file, top_ports)
 
     for (net, data) in LocalNets.items():
@@ -959,7 +960,7 @@ if Options.R:
         (txt, i) = data
 
         if i.updates:
-            print >>file, net.replace(" ", "_"),
+            file.write("%s " % net.replace(" ", "_"))
             i.start += TotalIntervals.start
             i.end += TotalIntervals.start
             i.applySampleFactor()
@@ -975,11 +976,11 @@ if Options.R:
 
 for i in TotalIntervals.ints:
     if i:
-        print i.format(conns=Options.conns)
+        print(i.format(conns=Options.conns))
 
 Options.verbose = True
 
-print Total.format(conns=Options.conns, title="Total")
+print(Total.format(conns=Options.conns, title="Total"))
 
 locals = list(LocalNets.keys())
 
@@ -996,26 +997,26 @@ if locals:
 
     locals.sort(key=lambda x: LocalNets[x][1].pkts, reverse=True)
 
-    print "\n>== Top %d local networks by number of %s\n" % (Options.topx, type)
+    print("\n>== Top %d local networks by number of %s\n" % (Options.topx, type))
 
     for i in range(min(len(locals), Options.topx)):
-        print "    %2d %5s  %-16s %s " % (i+1, formatVal(LocalNets[locals[i]][1].pkts), locals[i], LocalNets[locals[i]][0])
-    print
+        print("    %2d %5s  %-16s %s " % (i+1, formatVal(LocalNets[locals[i]][1].pkts), locals[i], LocalNets[locals[i]][0]))
+    print()
 
     if len(NonLocalConns):
-        print "\n>== %d %s did not have any local address. Here are the first %d:\n" % (NonLocalCount, type, Options.topx)
+        print("\n>== %d %s did not have any local address. Here are the first %d:\n" % (NonLocalCount, type, Options.topx))
 
         for (src,dst) in NonLocalConns.keys():
-            print "    %s <-> %s" % (inet_ntox(src), inet_ntox(dst))
+            print("    %s <-> %s" % (inet_ntox(src), inet_ntox(dst)))
 
 if Options.localnets:
-    print Incoming.format(conns=Options.conns, title="Incoming")
-    print Outgoing.format(conns=Options.conns, title="Outgoing")
+    print(Incoming.format(conns=Options.conns, title="Incoming"))
+    print(Outgoing.format(conns=Options.conns, title="Outgoing"))
 
 for net in locals:
     (txt, i) = LocalNets[net]
 
     if i.updates:
-        print i.format(conns=Options.conns, title=net + " " + txt)
+        print(i.format(conns=Options.conns, title=net + " " + txt))
 
-print "First: %16s (%.6f) Last: %s %.6f" % (isoTime(Total.start), Total.start, isoTime(Total.end), Total.end)
+print("First: %16s (%.6f) Last: %s %.6f" % (isoTime(Total.start), Total.start, isoTime(Total.end), Total.end))
