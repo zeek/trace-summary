@@ -196,7 +196,7 @@ class Interval:
             prots = topx(self.prots)
             servs = topx(self.servs)
 
-            servs = map(lambda (count, svc): (count, svc.replace("icmp-", "i-").replace("netbios", "nb")), servs)
+            servs = [ (count, svc.replace("icmp-", "i-").replace("netbios", "nb")) for count, svc in servs ]
 
             s += "\n     %-5s        | %-18s        | %-18s        | %-18s | %1s |" \
                 % ("Ports", "Sources", "Destinations", "Services", "Protocols")
@@ -271,11 +271,9 @@ class Interval:
         return self.format(True)
 
 def topx(dict, fill_if_empty=False):
-    top = map(lambda (val, count): (count, val), dict.items())
-    top.sort()
-    top.reverse()
+    top = sorted([ (count, val) for val, count in dict.items() ], reverse=True)
 
-     # Filter out zero vals.
+    # Filter out zero vals.
     top = [(val, count) for (val, count) in top if count != 0]
 
     if fill_if_empty and len(top) < Options.topx:
@@ -336,6 +334,8 @@ def readPcap(file):
     proc = subprocess.Popen("ipsumdump -r %s --timestamp --src --dst --sport --dport --length --protocol --fragment --payload-length -Q" % file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     for line in proc.stdout:
+        if using_py3:
+            line = line.decode()
 
         if line.startswith("!"):
             continue
@@ -467,7 +467,7 @@ def readConnSummaries(file):
 
                 parseConnLine(line)
 
-        except IOError, e:
+        except IOError as e:
             if e.errno == errno.EINTR or e.errno == errno.EAGAIN:
                 continue
 
@@ -755,6 +755,12 @@ def unspecified_addr(ipstr):
 
 ####### Main
 
+# Check which version of Python is running
+if sys.version_info[0] == 3:
+    using_py3 = True
+else:
+    using_py3 = False
+
 Total = Interval()
 Incoming = Interval()
 Outgoing = Interval()
@@ -975,7 +981,7 @@ Options.verbose = True
 
 print Total.format(conns=Options.conns, title="Total")
 
-locals = LocalNets.keys()
+locals = list(LocalNets.keys())
 
 for net in locals:
     (txt, i) = LocalNets[net]
@@ -988,7 +994,7 @@ if locals:
     if Options.conns:
         type = "connections"
 
-    locals.sort(lambda x,y: int(LocalNets[y][1].pkts - LocalNets[x][1].pkts))
+    locals.sort(key=lambda x: LocalNets[x][1].pkts, reverse=True)
 
     print "\n>== Top %d local networks by number of %s\n" % (Options.topx, type)
 
