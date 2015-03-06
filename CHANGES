@@ -1,4 +1,17 @@
 
+0.83-19 | 2015-03-06 14:52:27 -0800
+
+  * Update code to work with Python 3. Bump minimum required Python
+    version to 2.6. (Daniel Thayer)
+
+  * Fix timestamps to not loose precision unnecessarily. (Daniel
+    Thayer)
+
+  * Add more error checks so errors are reported more clearly. (Daniel
+    Thayer)
+
+  * Add regression tests. (Daniel Thayer)
+
 0.83-9 | 2014-12-08 13:54:39 -0800
 
   * Add man page for trace-summary. (Raúl Benencia)
