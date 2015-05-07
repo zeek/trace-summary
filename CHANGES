@@ -1,4 +1,8 @@
 
+0.84 | 2015-04-27 08:25:19 -0700
+
+  * Release 0.84
+
 0.83-19 | 2015-03-06 14:52:27 -0800
 
   * Update code to work with Python 3. Bump minimum required Python
