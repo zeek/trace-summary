@@ -1,4 +1,8 @@
 
+0.84-2 | 2015-08-18 07:54:36 -0700
+
+  * Fix typo in a TEST_DIFF_CANONIFIER script name. (Daniel Thayer)
+
 0.84 | 2015-04-27 08:25:19 -0700
 
   * Release 0.84
