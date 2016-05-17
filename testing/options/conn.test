@@ -1,5 +1,8 @@
-# Test the -c (conn-summaries) option.
+# Test the -c (conn-summaries) option.  Test with and without IPv6 addresses
+# to verify the column widths are adjusted correctly.
 #
 # @TEST-EXEC: trace-summary -c $FILES/conn.log > out
+# @TEST-EXEC: trace-summary -c $FILES/conn_ipv4.log > out_ipv4
 # @TEST-EXEC: btest-diff out
+# @TEST-EXEC: btest-diff out_ipv4
 

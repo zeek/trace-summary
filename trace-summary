@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.84-2" # Automatically filled in.
+VERSION = "0.84-16" # Automatically filled in.
 
 random.seed()
 
@@ -199,8 +199,35 @@ class Interval:
 
             servs = [ (count, svc.replace("icmp-", "i-").replace("netbios", "nb")) for count, svc in servs ]
 
-            s += "\n     %-5s        | %-18s        | %-18s        | %-18s | %1s |" \
-                % ("Ports", "Sources", "Destinations", "Services", "Protocols")
+            # Default column widths for IP addresses.
+            srcwidth = 18
+            dstwidth = 18
+
+            # Check all IP addrs to see if column widths need to be increased
+            # (due to the presence of long IPv6 addresses).
+            src_over = 0
+            dst_over = 0
+            for i in range(Options.topx):
+                for dict in (srcs, dsts):
+                    try:
+                        item = inet_ntox(dict[i][1])
+                    except IndexError:
+                        continue
+
+                    # Note: 15 is longest possible IPv4 address.
+                    oversize = len(item) - 15
+                    if oversize > 0:
+                        if dict == srcs:
+                            src_over = max(src_over, oversize)
+                        elif dict == dsts:
+                            dst_over = max(dst_over, oversize)
+
+            # Increase column widths, if necessary.
+            srcwidth += src_over
+            dstwidth += dst_over
+
+            s += "\n     %-5s        | %-*s        | %-*s        | %-18s | %1s |" \
+                % ("Ports", srcwidth, "Sources", dstwidth, "Destinations", "Services", "Protocols")
 
             if conns:
                 s += " States        |"
@@ -216,7 +243,7 @@ class Interval:
 
                 s += "     "
 
-                for (dict, length) in ((ports, 5), (srcs, 18), (dsts, 18), (servs, 11), (prots, 2), states):
+                for (dict, length) in ((ports, 5), (srcs, srcwidth), (dsts, dstwidth), (servs, 11), (prots, 2), states):
                     try:
                         item = None
                         if dict == srcs or dict == dsts:

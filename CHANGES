@@ -1,4 +1,13 @@
 
+0.84-16 | 2016-05-17 16:21:13 -0700
+
+  * Adjust IP address column widths as needed for IPv6 addrs to
+    improve readability of the output. Addresses BIT-1571. (Daniel
+    Thayer)
+
+  * Add README.rst -> README symlink. Addresses BIT-1413 (Johanna
+    Amann)
+
 0.84-2 | 2015-08-18 07:54:36 -0700
 
   * Fix typo in a TEST_DIFF_CANONIFIER script name. (Daniel Thayer)
