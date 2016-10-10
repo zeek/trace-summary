@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.85" # Automatically filled in.
+VERSION = "0.85-3" # Automatically filled in.
 
 random.seed()
 
@@ -713,6 +713,10 @@ def gethostbyaddr( ip, timeout = 5, default = "<???>" ):
             host = socket.gethostbyaddr( ip )[0]
         except socket.herror:
             pass
+
+        if using_py3:
+            host = host.encode()
+
         os.write( pout, host )
         posix._exit(127)
 
@@ -725,6 +729,8 @@ def gethostbyaddr( ip, timeout = 5, default = "<???>" ):
     try:
         os.waitpid( pid, 0 )
         host = os.read( pin, 8192 )
+        if using_py3:
+            host = host.decode()
     except OSError:
         pass
 

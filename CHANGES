@@ -1,4 +1,8 @@
 
+0.85-3 | 2016-10-10 08:15:55 -0700
+
+  * Python 3 compatibility fix. (Daniel Thayer)
+
 0.85 | 2016-08-12 13:20:06 -0700
 
   * Release 0.85.
