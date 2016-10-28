@@ -26,11 +26,13 @@ endif ()
 ########################################################################
 ## Install Files
 
+include(InstallShellScript)
+
 if ( NOT BRO_MAN_INSTALL_PATH )
     set(BRO_MAN_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/share/man)
 endif ()
 
-install(PROGRAMS trace-summary DESTINATION bin)
+InstallShellScript(bin trace-summary)
 install(FILES trace-summary.1 DESTINATION ${BRO_MAN_INSTALL_PATH}/man1)
 
 ########################################################################
