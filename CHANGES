@@ -1,4 +1,22 @@
 
+0.86 | 2016-10-31 10:27:57 -0700
+
+  * Release 0.86.
+
+  * Update description of Bro in the README (Daniel Thayer)
+
+  * Let cmake put the python path in the hashbang line. (Daniel Thayer)
+
+  * Remove ipsumdump check. Addresses BIT-1736. (Johanna Amann)
+
+0.85-5 | 2016-10-20 11:50:23 -0400
+
+  * Fix test canonifier to work with FreeBSD/OSx sed. (Daniel Thayer).
+
+0.85-3 | 2016-10-10 08:15:55 -0700
+
+  * Python 3 compatibility fix. (Daniel Thayer)
+
 0.85 | 2016-08-12 13:20:06 -0700
 
   * Release 0.85.

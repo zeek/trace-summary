@@ -23,25 +23,16 @@ if (NOT SUBNETTREE_FOUND)
     endif ()
 endif ()
 
-# Check cache value first to avoid displaying "Found" messages everytime
-if (NOT IPSUMDUMP_EXE)
-    find_program(IPSUMDUMP_EXE ipsumdump)
-    if (NOT IPSUMDUMP_EXE)
-        message(WARNING "Could not find dependency: 'ipsumdump', "
-                        "trace-summary will not be able to read pcap traces")
-    else ()
-        message(STATUS "Found ipsumdump: ${IPSUMDUMP_EXE}")
-    endif ()
-endif ()
-
 ########################################################################
 ## Install Files
+
+include(InstallShellScript)
 
 if ( NOT BRO_MAN_INSTALL_PATH )
     set(BRO_MAN_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/share/man)
 endif ()
 
-install(PROGRAMS trace-summary DESTINATION bin)
+InstallShellScript(bin trace-summary)
 install(FILES trace-summary.1 DESTINATION ${BRO_MAN_INSTALL_PATH}/man1)
 
 ########################################################################
