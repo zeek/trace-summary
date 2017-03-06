@@ -1,0 +1,5 @@
+# Test a conn.log that has a non-default field separator character.
+#
+# @TEST-EXEC: trace-summary -c $FILES/conn.log_separator > out
+# @TEST-EXEC: btest-diff out
+

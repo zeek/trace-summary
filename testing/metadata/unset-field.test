@@ -1,0 +1,5 @@
+# Test a conn.log that has a non-default unset field string.
+#
+# @TEST-EXEC: trace-summary -c $FILES/conn.log_unset_field > out
+# @TEST-EXEC: btest-diff out
+
