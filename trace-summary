@@ -554,7 +554,9 @@ def getLogInfo(file):
 
             if line.startswith("#separator"):
                 try:
-                    field_sep = chr(int(line.split()[1][2:], 16))
+                    field_sep = line.split()[1]
+                    if field_sep.startswith("\\x"):
+                        field_sep = chr(int(field_sep[2:], 16))
                 except (IndexError, ValueError):
                     # If no value found, then just use default.
                     print("Ignoring bad '#separator' line", file=sys.stderr)
