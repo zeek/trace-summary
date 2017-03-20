@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.86" # Automatically filled in.
+VERSION = "0.86-8" # Automatically filled in.
 
 random.seed()
 
@@ -480,20 +480,16 @@ Protocols = { "T": 6, "tcp": 6, "U": 17, "udp": 17, "I": 1, "icmp": 1 }
 States = ["OTH", "REJ", "RSTO", "RSTOS0", "RSTR", "RSTRH", "S0", "S1", "S2", "S3", "SF", "SH", "SHR"]
 
 def readConnSummaries(file):
+    # Determine the field separator, unset field string, and field indices
+    # for the specified conn.log file.
+    (field_sep, unset_field, idx, max_idx_1) = getLogInfo(file)
+
     while True:
         try:
             for line in open(file):
-                if Options.conn_version == 0 and line[0] != "#":
-                    # Guess the conn.log version by looking at the number of
-                    # fields we have.
-                    m = line.split()
-
-                    if len(m) < 15:
-                        Options.conn_version = 1
-                    else:
-                        Options.conn_version = 2
-
-                parseConnLine(line)
+                # Skip log metadata lines.
+                if line[0] != "#":
+                    parseConnLine(line, field_sep, unset_field, idx, max_idx_1)
 
         except IOError as e:
             if e.errno == errno.EINTR or e.errno == errno.EAGAIN:
@@ -503,83 +499,149 @@ def readConnSummaries(file):
 
         return
 
-def parseConnLine(line):
-    global Total
-    global Incoming
-    global Outgoing
+def getLogInfo(file):
+    if Options.conn_version == 0:
+        with open(file, "r") as fin:
+            line = fin.readline()
 
-    global LastOutputTime, BaseTime
+            # Guess the conn.log version by checking for a metadata line.
+            if line[0] == "#":
+                Options.conn_version = 2
+            else:
+                # Guess the conn.log version by looking at the number of
+                # fields we have.
+                m = line.split()
+
+                if len(m) < 15:
+                    Options.conn_version = 1
+                else:
+                    Options.conn_version = 2
+
+    if Options.conn_version == 1:
+        # Field names needed by this script, listed here in same order as
+        # found in bro version 1.x conn.log.
+        field_names = ("ts", "duration", "id.orig_h", "id.resp_h", "service", "id.orig_p", "id.resp_p", "proto", "orig_bytes", "resp_bytes", "conn_state")
+
+        idx = {}
+        for field in field_names:
+            idx[field] = len(idx)
+
+        # max_idx_1 is max. index value plus 1
+        max_idx_1 = len(field_names)
+
+        field_sep = " "
+        unset_field = "?"
+
+        return (field_sep, unset_field, idx, max_idx_1)
+
+    # Field names needed by this script, listed here in same order as
+    # found in conn.log.
+    field_names = ("ts", "uid", "id.orig_h", "id.orig_p", "id.resp_h", "id.resp_p", "proto", "service", "duration", "orig_bytes", "resp_bytes", "conn_state")
+
+    field_sep = "\t"
+    unset_field = "-"
+    idx = {}
+
+    with open(file, "r") as fin:
+        for line in fin:
+            if line[0] != "#":
+                break
+
+            # Remove trailing '\n' so that it's not included in last item of
+            # results from split().
+            if line[-1] == "\n":
+                line = line[:-1]
+
+            if line.startswith("#separator"):
+                try:
+                    field_sep = line.split()[1]
+                    if field_sep.startswith("\\x"):
+                        field_sep = chr(int(field_sep[2:], 16))
+                except (IndexError, ValueError):
+                    # If no value found, then just use default.
+                    print("Ignoring bad '#separator' line", file=sys.stderr)
+
+            elif line.startswith("#unset_field"):
+                try:
+                    unset_field = line.split(field_sep)[1]
+                except IndexError:
+                    # If no value found, then just use default.
+                    print("Ignoring bad '#unset_field' line", file=sys.stderr)
+
+            elif line.startswith("#fields"):
+                fields = line.split(field_sep)[1:]
+                max_idx_1 = 0
+                idx = {}
+                for field in field_names:
+                    try:
+                        idx[field] = fields.index(field)
+                    except ValueError as err:
+                        # If any field is missing, then just use defaults.
+                        idx = {}
+                        print("Ignoring bad '#fields' line: %s" % err, file=sys.stderr)
+                        break
+
+                    max_idx_1 = max(max_idx_1, idx[field])
+
+                max_idx_1 += 1
+
+    # If no fields metadata was found, then just use default values.
+    if not idx:
+        # max_idx_1 is max. index value plus 1
+        max_idx_1 = len(field_names)
+
+        for field in field_names:
+            idx[field] = len(idx)
+
+    return (field_sep, unset_field, idx, max_idx_1)
+
+def parseConnLine(line, field_sep, unset_field, idx, max_idx_1):
+    global Total, Incoming, Outgoing, LastOutputTime, BaseTime
 
     if Options.sample > 0 and random.random() > Options.sample:
         return
 
-    if line.startswith("#"):
-        # '#' is the default log header prefix, skip lines that start with that
+    # Remove trailing '\n' so that it's not included in last item of
+    # results from split().
+    if line[-1] == "\n":
+        line = line[:-1]
+
+    f = line.split(field_sep, max_idx_1)
+
+    if len(f) < max_idx_1:
+        print("Ignoring corrupt line: %s" % line, file=sys.stderr)
         return
 
-    f = line.split()
+    proto_val = f[idx["proto"]]
 
-    if Options.conn_version == 1:
-        ts_idx = 0
-        orig_h_idx = 2
-        orig_p_idx = 5
-        resp_h_idx = 3
-        resp_p_idx = 6
-        proto_idx = 7
-        service_idx = 4
-        duration_idx = 1
-        orig_bytes_idx = 8
-        resp_bytes_idx = 9
-        conn_state_idx = 10
+    if Options.tcp and proto_val != "tcp":
+        return
 
-    elif Options.conn_version == 2:
-        ts_idx = 0
-        uid_idx = 1
-        orig_h_idx = 2
-        orig_p_idx = 3
-        resp_h_idx = 4
-        resp_p_idx = 5
-        proto_idx = 6
-        service_idx = 7
-        duration_idx = 8
-        orig_bytes_idx = 9
-        resp_bytes_idx = 10
-        conn_state_idx = 11
-        local_orig_idx = 12
-        missed_bytes_idx = 13
-        history_idx = 14
-
-    if len(f) < 11: # 11 is ok for icmp
-        print("Ignoring corrupt line: '%s'" % line.strip(), file=sys.stderr)
+    if Options.udp and proto_val != "udp":
         return
 
     try:
-        time = float(f[ts_idx])
+        time = float(f[idx["ts"]])
     except ValueError:
-        print("Invalid starting time %s" % f[ts_idx], file=sys.stderr)
+        print("Invalid starting time on line: %s" % line, file=sys.stderr)
         return
 
-    if f[duration_idx] != "-" and f[duration_idx] != "?":
+    duration_str = f[idx["duration"]]
+    if duration_str != unset_field:
         try:
-            duration = float(f[duration_idx])
-        except:
+            duration = float(duration_str)
+        except ValueError:
             # The default unset/empty field string can be changed from "-"
             # and in that case, it's hard to know if this exception is due
             # to that or because we're looking at the wrong column entirely,
             # so just print an error and continue with the assumption of
             # an unset/empty duration column.
-            print("Invalid duration %s" % f[duration_idx], file=sys.stderr)
+            print("Invalid duration on line: %s" % line, file=sys.stderr)
             duration = 0
     else:
         duration = 0
 
     if time < Options.mintime or (time + duration) > Options.maxtime:
-        return
-
-    if Options.tcp and f[proto_idx] != "tcp":
-        return
-
-    if Options.udp and f[proto_idx] != "udp":
         return
 
     if not BaseTime:
@@ -590,74 +652,68 @@ def parseConnLine(line):
         # print("%d hours processed" % int((time - BaseTime) / 3600), file=sys.stderr)
         LastOutputTime = time
 
+    orig_bytes_str = f[idx["orig_bytes"]]
+    resp_bytes_str = f[idx["resp_bytes"]]
+
     try:
-        iupdate = IntervalUpdate()
-        iupdate.pkts = 1 # no. connections
+        bytes_orig = int(orig_bytes_str)
+    except ValueError:
+        bytes_orig = 0
 
-        try:
-            bytes_orig = int(f[orig_bytes_idx])
-        except:
-            bytes_orig = 0
+    try:
+        bytes_resp = int(resp_bytes_str)
+    except ValueError:
+        bytes_resp = 0
 
-        try:
-            bytes_resp = int(f[resp_bytes_idx])
-        except:
-            bytes_resp = 0
+    iupdate = IntervalUpdate()
+    iupdate.pkts = 1 # no. connections
+    iupdate.bytes = bytes_orig + bytes_resp
 
-        iupdate.bytes = bytes_orig + bytes_resp
-        iupdate.src_ip = inet_xton(f[orig_h_idx])
+    try:
+        iupdate.src_ip = inet_xton(f[idx["id.orig_h"]])
         if iupdate.src_ip in ExcludeNets:
             return
-        iupdate.src_port = int(f[orig_p_idx])
-        iupdate.dst_ip = inet_xton(f[resp_h_idx])
+        iupdate.src_port = int(f[idx["id.orig_p"]])
+        iupdate.dst_ip = inet_xton(f[idx["id.resp_h"]])
         if iupdate.dst_ip in ExcludeNets:
             return
-        iupdate.dst_port = int(f[resp_p_idx])
-        iupdate.prot = Protocols[f[proto_idx]]
+        iupdate.dst_port = int(f[idx["id.resp_p"]])
+        iupdate.prot = Protocols[proto_val]
 
-        iupdate.service = f[service_idx]
+        iupdate.service = f[idx["service"]]
         if iupdate.service[-1] == "?":
             iupdate.service = iupdate.service[:-1]
-        iupdate.frags = 0
-        iupdate.state = f[conn_state_idx]
-        iupdate.start = time
 
-    except LookupError:
-        print("Ignoring corrupt line: '%s'" % line.strip(), file=sys.stderr)
+    except (KeyError, ValueError, IndexError):
+        print("Ignoring corrupt line: %s" % line, file=sys.stderr)
         return
 
-    try:
-        iupdate.end = time + duration
-    except ValueError:
-        iupdate.end = time
+    iupdate.frags = 0
+    iupdate.state = f[idx["conn_state"]]
+    iupdate.start = time
+    iupdate.end = time + duration
 
-    try:
-        payload_orig = int(f[orig_bytes_idx])
+    payload_orig = bytes_orig
+    payload_resp = bytes_resp
 
-        if duration and payload_orig * 8 / (1024 * 1024 * duration) > 700:
+    if duration:
+        bytes_to_mbps = 8 / (1024 * 1024 * duration)
+
+        if payload_orig * bytes_to_mbps > 700:
             # Bandwidth exceed due to Bro bug.
-            if Options.conn_version == 1:
-                print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
+            if Options.conn_version == 2:
+                print("UID %s originator exceeds bandwidth" % f[idx["uid"]], file=sys.stderr)
             else:
-                print("UID %s originator exceeds bandwidth" % f[uid_idx], file=sys.stderr)
+                print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
             payload_orig = 0
 
-    except ValueError:
-        payload_orig = 0
-
-    try:
-        payload_resp = int(f[resp_bytes_idx])
-
-        if duration and  payload_resp * 8 / (1024 * 1024 * duration) > 700:
+        if payload_resp * bytes_to_mbps > 700:
             # Bandwidth exceed due to Bro bug.
-            if Options.conn_version == 1:
-                print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
+            if Options.conn_version == 2:
+                print("UID %s originator exceeds bandwidth" % f[idx["uid"]], file=sys.stderr)
             else:
-                print("UID %s originator exceeds bandwidth" % f[uid_idx], file=sys.stderr)
+                print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
             payload_resp = 0
-
-    except ValueError:
-        payload_resp = 0
 
     iupdate.payload = payload_orig + payload_resp
 

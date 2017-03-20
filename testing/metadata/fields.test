@@ -1,0 +1,5 @@
+# Test a conn.log that has non-default field positions.
+#
+# @TEST-EXEC: trace-summary -c $FILES/conn.log_reorder > out
+# @TEST-EXEC: btest-diff out
+

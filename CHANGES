@@ -1,4 +1,16 @@
 
+0.86-8 | 2017-03-20 12:12:06 -0700
+
+  * Extended trace-summary to interpret Bro 2.x-style log header
+    lines. (Daniel Thayer)
+
+  * Improve error handling and performance when reading conn.log by
+    skipping redundant operations removing unused variables and
+    unnecessary exception handlers. (Daniel Thayer)
+
+  * Improved a few error messages by showing more info. (Daniel
+    Thayer)
+
 0.86 | 2016-10-31 10:27:57 -0700
 
   * Release 0.86.
