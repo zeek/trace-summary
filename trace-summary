@@ -1027,7 +1027,7 @@ unique = {}
 for (count, port) in topx(Total.ports) + topx(Incoming.ports) + topx(Outgoing.ports):
     unique[port] = (count, port)
 
-top_ports = unique.values()
+top_ports = sorted(unique.values(), key=lambda x: x[1])
 
 if Options.storeports:
     f = open(Options.storeports, "w")
@@ -1099,7 +1099,7 @@ if locals:
     if len(NonLocalConns):
         print("\n>== %d %s did not have any local address. Here are the first %d:\n" % (NonLocalCount, type, Options.topx))
 
-        for (src,dst) in NonLocalConns.keys():
+        for (src,dst) in sorted(NonLocalConns.keys()):
             print("    %s <-> %s" % (inet_ntox(src), inet_ntox(dst)))
 
 if Options.localnets:
