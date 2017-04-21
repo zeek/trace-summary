@@ -1,4 +1,11 @@
 
+0.86-11 | 2017-04-21 14:24:45 -0700
+
+  * Fix some failing tests on Python 3. (Daniel Thayer)
+
+  * Fix a minor bug when using Python 3, and improved the check to
+    detect if Python 3 is running. (Daniel Thayer)
+
 0.86-8 | 2017-03-20 12:12:06 -0700
 
   * Extended trace-summary to interpret Bro 2.x-style log header

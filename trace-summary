@@ -12,7 +12,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.86-8" # Automatically filled in.
+VERSION = "0.86-11" # Automatically filled in.
 
 random.seed()
 
@@ -783,11 +783,15 @@ def gethostbyaddr( ip, timeout = 5, default = "<???>" ):
     signal.alarm( timeout )
 
     try:
-        os.waitpid( pid, 0 )
-        host = os.read( pin, 8192 )
-        if using_py3:
-            host = host.decode()
+        childpid, status = os.waitpid(pid, 0)
+
+        if os.WIFEXITED(status) and os.WEXITSTATUS(status) == 127:
+            host = os.read(pin, 8192)
+            if using_py3:
+                host = host.decode()
     except OSError:
+        # If the child process is killed while waitpid() is waiting, then
+        # only Python 2 (not Python 3) raises OSError.
         pass
 
     signal.alarm( 0 )
@@ -846,7 +850,7 @@ def unspecified_addr(ipstr):
 ####### Main
 
 # Check which version of Python is running
-if sys.version_info[0] == 3:
+if sys.version_info[0] >= 3:
     using_py3 = True
 else:
     using_py3 = False
@@ -1023,7 +1027,7 @@ unique = {}
 for (count, port) in topx(Total.ports) + topx(Incoming.ports) + topx(Outgoing.ports):
     unique[port] = (count, port)
 
-top_ports = unique.values()
+top_ports = sorted(unique.values(), key=lambda x: x[1])
 
 if Options.storeports:
     f = open(Options.storeports, "w")
@@ -1095,7 +1099,7 @@ if locals:
     if len(NonLocalConns):
         print("\n>== %d %s did not have any local address. Here are the first %d:\n" % (NonLocalCount, type, Options.topx))
 
-        for (src,dst) in NonLocalConns.keys():
+        for (src,dst) in sorted(NonLocalConns.keys()):
             print("    %s <-> %s" % (inet_ntox(src), inet_ntox(dst)))
 
 if Options.localnets:
