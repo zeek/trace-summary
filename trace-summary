@@ -603,10 +603,11 @@ def getLogInfo(file):
                 max_idx_1 += 1
 
     # If no fields metadata was found, then just use default values.
-    if not is_json and not idx:
+    if not idx:
         # max_idx_1 is max. index value plus 1
         max_idx_1 = len(field_names)
-        scope_separator = "."
+        if not is_json:
+            scope_separator = "."
 
         for field in field_names:
             idx[field] = len(idx)
