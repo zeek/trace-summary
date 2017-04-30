@@ -164,7 +164,8 @@ class Interval:
 
             return "%s %s%s" % (tag, formatVal(count), sep)
 
-        s = "\n>== %s === %s - %s\n   - " % (title, isoTime(self.start), isoTime(self.end))
+        s = "\n>== %s === %s - %s\n" % (title, isoTime(self.start), isoTime(self.end))
+        s += "   - "
 
         if not conns:
             # Information for packet traces.
@@ -178,39 +179,52 @@ class Interval:
             except ZeroDivisionError:
                 mbit = 0
 
-            s += "MBit/s %8.1f - " % mbit
+            s += "MBit/s %.1f - " % mbit
 
         else:
             # Information for connection summaries.
-            s += fmt("Connections", self.pkts) + \
-                 fmt("Payload", self.payload)
+            s += fmt("Connections", self.pkts) + fmt("Payload", self.payload)
 
         if Options.factor != 1:
-            s += "Sampling %.2f%% -" % ( 100.0 / Options.factor )
+            s += "Sampling %.2f%% -" % (100.0 / Options.factor)
+
+        s = s.rstrip()
 
         if Options.verbose:
             ports = topx(self.ports)
             srcs = topx(self.srcs)
             dsts = topx(self.dsts)
             prots = topx(self.prots)
-            servs = topx(self.servs)
 
-            servs = [(count, svc.replace("icmp-", "i-").replace("netbios", "nb")) for count, svc in servs]
+            left_margin = "     "
+            delimiter = " | "
+            percentlen = 6   # Length of "%5.1f%%" field in the fmt() function.
 
-            # Default column widths for IP addresses.
-            srcwidth = 18
-            dstwidth = 18
+            # Column widths
+            portlen = 5      # Ports column
+            srclen = 15      # Sources column
+            dstlen = 15      # Destinations column
+            servlen = 11     # Services column
+            protolen = 2     # Protocols column
+            statelen = 6     # States column
 
             # Check all IP addrs to see if column widths need to be increased
-            # (due to the presence of long IPv6 addresses).
+            # (due to the presence of long IPv6 addresses or when resolving
+            # hostnames).
             src_over = 0
             dst_over = 0
+            ct = 0
             for i in range(Options.topx):
                 for dict in (srcs, dsts):
                     try:
                         item = inet_ntox(dict[i][1])
                     except IndexError:
                         continue
+
+                    # Need to account for extra length when resolving hostnames.
+                    if Options.resolve:
+                        ct += 1
+                        item += "#%d" % ct
 
                     # Note: 15 is longest possible IPv4 address.
                     oversize = len(item) - 15
@@ -221,27 +235,43 @@ class Interval:
                             dst_over = max(dst_over, oversize)
 
             # Increase column widths, if necessary.
-            srcwidth += src_over
-            dstwidth += dst_over
+            srclen += src_over
+            dstlen += dst_over
 
-            s += "\n     %-5s        | %-*s        | %-*s        | %-18s | %1s |" \
-                % ("Ports", srcwidth, "Sources", dstwidth, "Destinations", "Services", "Protocols")
+            s += "\n%s" % left_margin
+            s += "%-*s%s" % (portlen + 1 + percentlen, "Ports", delimiter)
+            s += "%-*s%s" % (srclen + 1 + percentlen, "Sources", delimiter)
+            s += "%-*s%s" % (dstlen + 1 + percentlen, "Destinations", delimiter)
 
             if conns:
-                s += " States        |"
-                states = (topx(self.states), 6)
+                s += "%-*s%s" % (servlen + 1 + percentlen, "Services", delimiter)
+                servs = topx(self.servs)
+                servs = [(count, svc.replace("icmp-", "i-").replace("netbios", "nb")) for count, svc in servs]
+                services = (servs, servlen)
             else:
-                states = ({}, 0)
+                services = ([], 0)
 
+            s += "%-*s%s" % (protolen + 1 + percentlen, "Protocols", delimiter)
+
+            if conns:
+                s += "%-*s%s" % (statelen + 1 + percentlen, "States", delimiter)
+                states = (topx(self.states), statelen)
+            else:
+                states = ([], 0)
+
+            s = s.rstrip()
             s += "\n"
 
             addrs = []
 
             for i in range(Options.topx):
 
-                s += "     "
+                s += left_margin
 
-                for (dict, length) in ((ports, 5), (srcs, srcwidth), (dsts, dstwidth), (servs, 11), (prots, 2), states):
+                for (dict, length) in ((ports, portlen), (srcs, srclen), (dsts, dstlen), services, (prots, protolen), states):
+                    if length == 0:
+                        continue
+
                     try:
                         item = None
                         if dict == srcs or dict == dsts:
@@ -252,18 +282,23 @@ class Interval:
                         else:
                             item = str(dict[i][1])
 
-                        s += fmt("%-*s" % (length, item), dict[i][0], (self.bytes if Options.bytes else self.pkts), sep=" | ")
-                    except:
-                        s += " " * length + "        | "
+                        totalcount = self.bytes if Options.bytes else self.pkts
+                        s += fmt("%-*s" % (length, item), dict[i][0], totalcount, sep=delimiter)
+                    except IndexError:
+                        s += "%-*s%s" % (length + 1 + percentlen, "", delimiter)
 
+                s = s.rstrip()
                 s += "\n"
 
             if Options.resolve:
-                s += "\n        "
+                s += "\n%s   " % left_margin
                 for i in range(1, len(addrs)+1):
                     s += "#%d=%s  " % (i, gethostbyaddr(inet_ntox(addrs[i-1])))
                     if i % 3 == 0:
-                        s += "\n        "
+                        s = s.rstrip()
+                        s += "\n%s   " % left_margin
+
+                s = s.rstrip()
 
             s += "\n"
 
@@ -397,7 +432,6 @@ def readPcap(file):
         iupdate.pkts = 1
         iupdate.bytes = int(f[5])
         iupdate.payload = int(f[8])
-        iupdate.service = ""
 
         try:
             iupdate.src_ip = inet_xton(f[1])
@@ -433,14 +467,18 @@ def readPcap(file):
             iupdate.prot = Protocols[f[6]]
         except KeyError:
             iupdate.prot = 0
-        iupdate.state = 0
-        iupdate.start = time
-        iupdate.end = time
 
         if f[7] != ".":
             iupdate.frags = 1
         else:
             iupdate.frags = 0
+
+        iupdate.start = time
+        iupdate.end = time
+
+        # ipsumdump doesn't provide this info, so the values here are placeholders
+        iupdate.state = ""
+        iupdate.service = ""
 
         Total.update(iupdate)
 
@@ -1096,7 +1134,7 @@ if locals:
     print("\n>== Top %d local networks by number of %s\n" % (Options.topx, type))
 
     for i in range(min(len(locals), Options.topx)):
-        print("    %2d %5s  %-16s %s " % (i+1, formatVal(LocalNets[locals[i]][1].pkts), locals[i], LocalNets[locals[i]][0]))
+        print("    %2d %5s  %-16s %s" % (i+1, formatVal(LocalNets[locals[i]][1].pkts), locals[i], LocalNets[locals[i]][0]))
     print()
 
     if NonLocalConns:
@@ -1113,6 +1151,7 @@ for net in locals:
     (txt, i) = LocalNets[net]
 
     if i.updates:
-        print(i.format(conns=Options.conns, title=net + " " + txt))
+        net_txt = "%s %s" % (net, txt)
+        print(i.format(conns=Options.conns, title=net_txt.rstrip()))
 
 print("First: %16s (%.6f) Last: %s %.6f" % (isoTime(Total.start), Total.start, isoTime(Total.end), Total.end))
