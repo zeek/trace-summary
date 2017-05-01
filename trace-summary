@@ -215,9 +215,9 @@ class Interval:
             dst_over = 0
             ct = 0
             for i in range(Options.topx):
-                for dict in (srcs, dsts):
+                for toplist in (srcs, dsts):
                     try:
-                        item = inet_ntox(dict[i][1])
+                        item = inet_ntox(toplist[i][1])
                     except IndexError:
                         continue
 
@@ -229,9 +229,9 @@ class Interval:
                     # Note: 15 is longest possible IPv4 address.
                     oversize = len(item) - 15
                     if oversize > 0:
-                        if dict == srcs:
+                        if toplist == srcs:
                             src_over = max(src_over, oversize)
-                        elif dict == dsts:
+                        elif toplist == dsts:
                             dst_over = max(dst_over, oversize)
 
             # Increase column widths, if necessary.
@@ -268,22 +268,22 @@ class Interval:
 
                 s += left_margin
 
-                for (dict, length) in ((ports, portlen), (srcs, srclen), (dsts, dstlen), services, (prots, protolen), states):
+                for (toplist, length) in ((ports, portlen), (srcs, srclen), (dsts, dstlen), services, (prots, protolen), states):
                     if length == 0:
                         continue
 
                     try:
                         item = None
-                        if dict == srcs or dict == dsts:
-                            item = inet_ntox(dict[i][1])
+                        if toplist == srcs or toplist == dsts:
+                            item = inet_ntox(toplist[i][1])
                             if Options.resolve:
-                                addrs += [dict[i][1]]
+                                addrs += [toplist[i][1]]
                                 item += "#%d" % len(addrs)
                         else:
-                            item = str(dict[i][1])
+                            item = str(toplist[i][1])
 
                         totalcount = self.bytes if Options.bytes else self.pkts
-                        s += fmt("%-*s" % (length, item), dict[i][0], totalcount, sep=delimiter)
+                        s += fmt("%-*s" % (length, item), toplist[i][0], totalcount, sep=delimiter)
                     except IndexError:
                         s += "%-*s%s" % (length + 1 + percentlen, "", delimiter)
 
@@ -334,7 +334,7 @@ def topx(dict, fill_if_empty=False):
     top = sorted([(count, val) for val, count in dict.items()], reverse=True)
 
     # Filter out zero vals.
-    top = [(val, count) for (val, count) in top if count != 0]
+    top = [(count, val) for (count, val) in top if val != 0]
 
     if fill_if_empty and len(top) < Options.topx:
         top += [(0, 0)] * Options.topx
@@ -920,7 +920,7 @@ ExcludeNets = SubnetTree.SubnetTree(True)
 
 optparser = optparse.OptionParser(usage="%prog [options] <pcap-file>|<conn-summaries>", version=VERSION)
 optparser.add_option("-b", "--bytes", action="store_true", dest="bytes", default=False,
-                     help="count fractions in terms of bytes rather than packets/connections")
+                     help="count percentages in terms of bytes rather than packets/connections")
 optparser.add_option("-c", "--conn-summaries", action="store_true", dest="conns", default=False,
                      help="input file contains Bro connection summaries")
 optparser.add_option("--conn-version", action="store", type="int", dest="conn_version", default=0,
@@ -928,15 +928,15 @@ optparser.add_option("--conn-version", action="store", type="int", dest="conn_ve
 optparser.add_option("-C", "--chema", action="store_true", dest="chema", default=False,
                      help="for packets: include only TCP, ignore when seq==0")
 optparser.add_option("-e", "--external", action="store_true", dest="external", default=False,
-                     help="ignore strictly internal traffic")
+                     help="ignore strictly internal traffic (requires -l)")
 optparser.add_option("-E", "--exclude-nets", action="store", type="string", dest="excludenets", default=None,
                      help="excludes CIDRs in file from analysis")
 optparser.add_option("-i", "--intervals", action="store", type="string", dest="ilen", default="0",
-                     help="create summaries for time intervals of given length (seconds, or use suffix of 'h' for hours, or 'm' for minutes)")
+                     help="show summaries for time intervals of given length (seconds, or use suffix of 'h' for hours, or 'm' for minutes)")
 optparser.add_option("-l", "--local-nets", action="store", type="string", dest="localnets", default=None,
-                     help="differentiate in/out based on CIDRs in file")
+                     help="differentiate incoming/outgoing based on CIDRs in file")
 optparser.add_option("-n", "--topn", action="store", type="int", dest="topx", default=10,
-                     help="show top <n>")
+                     help="show top <n> (default is 10)")
 optparser.add_option("-p", "--ports", action="store", type="string", dest="ports", default=None,
                      help="include only ports listed in file")
 optparser.add_option("-P", "--write-ports", action="store", type="string", dest="storeports", default=None,
@@ -950,7 +950,7 @@ optparser.add_option("-s", "--sample-factor", action="store", type="int", dest="
 optparser.add_option("-S", "--do-sample", action="store", type="float", dest="sample", default=-1.0,
                      help="sample input with probability (0.0 < prob < 1.0)")
 optparser.add_option("-m", "--save-mem", action="store_true", dest="save_mem", default=False,
-                     help="do not make memory-expensive statistics")
+                     help="avoid memory-expensive statistics")
 optparser.add_option("-t", "--tcp", action="store_true", dest="tcp", default=False,
                      help="include only TCP")
 optparser.add_option("-u", "--udp", action="store_true", dest="udp", default=False,
@@ -958,7 +958,7 @@ optparser.add_option("-u", "--udp", action="store_true", dest="udp", default=Fal
 optparser.add_option("-U", "--min-time", action="store", type="string", dest="mintime", default=None,
                      help="minimum time in ISO format (e.g. 2005-12-31-23-59-00)")
 optparser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
-                     help="show top-n for every interval")
+                     help="show top-n for every time interval (requires -i)")
 optparser.add_option("-V", "--max-time", action="store", type="string", dest="maxtime", default=None,
                      help="maximum time in ISO format")
 
@@ -974,6 +974,10 @@ if len(args) > 0:
 
 if Options.external and not Options.localnets:
     print("Need -l for -e.", file=sys.stderr)
+    sys.exit(1)
+
+if Options.chema and Options.conns:
+    print("Option -C cannot be used with -c.", file=sys.stderr)
     sys.exit(1)
 
 if Options.topx < 0:
