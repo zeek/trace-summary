@@ -1,4 +1,9 @@
 
+0.86-14 | 2017-05-18 14:19:25 -0500
+
+  * Add ability to read json format logs and logs with a non-default field
+    scope separator. (Pierre Gaulon)
+
 0.86-11 | 2017-04-21 14:24:45 -0700
 
   * Fix some failing tests on Python 3. (Daniel Thayer)
