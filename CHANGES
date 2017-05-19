@@ -1,4 +1,12 @@
 
+0.86-15 | 2017-05-19 14:01:03 -0500
+
+  * Fix to correctly identify JSON logs when "--conn-version=2" is specified.
+    Also fixed identification of non-default field scope separator for
+    non-json logs.  Minor cleanup of json and scope separator code, and
+    added test cases for json logs and logs with non-default scope
+    separator. (Daniel Thayer)
+
 0.86-14 | 2017-05-18 14:19:25 -0500
 
   * Add ability to read json format logs and logs with a non-default field

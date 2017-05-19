@@ -1,0 +1,8 @@
+# Test a conn.log that has a non-default field scope separator (test both a
+# normal ASCII log and a JSON log).
+#
+# @TEST-EXEC: trace-summary -c $FILES/conn.log_scope_sep > out
+# @TEST-EXEC: btest-diff out
+# @TEST-EXEC: trace-summary -c $FILES/conn.log_json_scope_sep > out2
+# @TEST-EXEC: btest-diff out2
+

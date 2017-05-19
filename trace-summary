@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 from json import loads
-from re import search
+import re
 import os
 import time
 import sys
@@ -14,7 +14,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.86-14" # Automatically filled in.
+VERSION = "0.86-15" # Automatically filled in.
 
 random.seed()
 
@@ -503,6 +503,7 @@ def readConnSummaries(file):
 
 def getLogInfo(file):
     is_json = False
+    scope_separator = "."
 
     if Options.conn_version == 0:
         with open(file, "r") as fin:
@@ -511,15 +512,20 @@ def getLogInfo(file):
             # Guess the conn.log version by checking for a metadata line.
             if line[0] == "#":
                 Options.conn_version = 2
+            elif line[0] == "{":
+                Options.conn_version = 2
+                is_json = True
+                f = loads(line)
+                if "id.orig_h" not in f:
+                    pattern = re.compile("id(.)orig_h$")
+                    for field in f:
+                        m = pattern.match(field)
+                        if m:
+                            scope_separator = m.group(1)
             else:
                 # Guess the conn.log version by looking at the number of
                 # fields we have.
-                if line[0] == "{":
-                    m = line.split(",")
-                    is_json = True
-                    scope_separator = search("id(.)orig_h", line).group(1)
-                else:
-                    m = line.split()
+                m = line.split()
 
                 if len(m) < 15:
                     Options.conn_version = 1
@@ -527,8 +533,6 @@ def getLogInfo(file):
                     Options.conn_version = 2
 
     if Options.conn_version == 1:
-        scope_separator = "."
-
         # Field names needed by this script, listed here in same order as
         # found in bro version 1.x conn.log.
         field_names = ("ts", "duration", "id.orig_h", "id.resp_h", "service", "id.orig_p", "id.resp_p", "proto", "orig_bytes", "resp_bytes", "conn_state")
@@ -541,9 +545,6 @@ def getLogInfo(file):
         max_idx_1 = len(field_names)
 
         field_sep = " "
-        if is_json:
-            field_sep = ","
-
         unset_field = "?"
 
         return (field_sep, unset_field, idx, max_idx_1, is_json, scope_separator)
@@ -553,14 +554,26 @@ def getLogInfo(file):
     field_names = ("ts", "uid", "id.orig_h", "id.orig_p", "id.resp_h", "id.resp_p", "proto", "service", "duration", "orig_bytes", "resp_bytes", "conn_state")
 
     field_sep = "\t"
-    if is_json:
-        field_sep = ","
-
     unset_field = "-"
     idx = {}
 
     with open(file, "r") as fin:
+        firstline = True
+
         for line in fin:
+            if firstline:
+                firstline = False
+                if line[0] == "{":
+                    is_json = True
+                    f = loads(line)
+                    if "id.orig_h" not in f:
+                        pattern = re.compile("id(.)orig_h$")
+                        for field in f:
+                            m = pattern.match(field)
+                            if m:
+                                scope_separator = m.group(1)
+                    break
+
             if line[0] != "#":
                 break
 
@@ -586,13 +599,24 @@ def getLogInfo(file):
                     print("Ignoring bad '#unset_field' line", file=sys.stderr)
 
             elif line.startswith("#fields"):
-                scope_separator = search("id(.)orig_h", line).group(1)
                 fields = line.split(field_sep)[1:]
+
+                if "id.orig_h" not in fields:
+                    # Either the "#fields" line is corrupt, or we're using a
+                    # non-default field scope separator.
+                    pattern = re.compile("id(.)orig_h$")
+                    for field in fields:
+                        m = pattern.match(field)
+                        if m:
+                            scope_separator = m.group(1)
+
                 max_idx_1 = 0
                 idx = {}
                 for field in field_names:
                     try:
-                        idx[field] = fields.index(field)
+                        # Use original field name in "idx" (even if there is a
+                        # non-default field scope separator).
+                        idx[field] = fields.index(field.replace(".", scope_separator))
                     except ValueError as err:
                         # If any field is missing, then just use defaults.
                         idx = {}
@@ -607,8 +631,6 @@ def getLogInfo(file):
     if not idx:
         # max_idx_1 is max. index value plus 1
         max_idx_1 = len(field_names)
-        if not is_json:
-            scope_separator = "."
 
         for field in field_names:
             idx[field] = len(idx)
@@ -630,10 +652,9 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
         f = loads(line)
     else:
         f = line.split(field_sep, max_idx_1)
-
-    if not is_json and len(f) < max_idx_1:
-        print("Ignoring corrupt line: %s" % line, file=sys.stderr)
-        return
+        if len(f) < max_idx_1:
+            print("Ignoring corrupt line: %s" % line, file=sys.stderr)
+            return
 
     if is_json:
         proto_val = f["proto"]
@@ -655,13 +676,13 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
         print("Invalid starting time on line: %s" % line, file=sys.stderr)
         return
 
-    try:
-        if is_json:
+    if is_json:
+        try:
             duration_str = f["duration"]
-        else:
-            duration_str = f[idx["duration"]]
-    except (KeyError, IndexError):
-        duration_str = unset_field
+        except KeyError:
+            duration_str = unset_field
+    else:
+        duration_str = f[idx["duration"]]
 
     if duration_str != unset_field:
         try:
@@ -688,20 +709,19 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
         # print("%d hours processed" % int((time - BaseTime) / 3600), file=sys.stderr)
         LastOutputTime = time
 
-    try:
-        if is_json:
+    if is_json:
+        try:
             orig_bytes_str = f["orig_bytes"]
-        else:
-            orig_bytes_str = f[idx["orig_bytes"]]
-    except KeyError:
-        orig_bytes_str = unset_field
-    try:
-        if is_json:
+        except KeyError:
+            orig_bytes_str = unset_field
+
+        try:
             resp_bytes_str = f["resp_bytes"]
-        else:
-            resp_bytes_str = f[idx["resp_bytes"]]
-    except KeyError:
+        except KeyError:
             resp_bytes_str = unset_field
+    else:
+        orig_bytes_str = f[idx["orig_bytes"]]
+        resp_bytes_str = f[idx["resp_bytes"]]
 
     try:
         bytes_orig = int(orig_bytes_str)
@@ -724,10 +744,10 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
             iupdate.dst_ip = inet_xton(f["id" + scope_separator + "resp_h"])
             iupdate.dst_port = int(f["id" + scope_separator + "resp_p"])
         else:
-            iupdate.src_ip = inet_xton(f[idx["id" + scope_separator + "orig_h"]])
-            iupdate.src_port = int(f[idx["id" + scope_separator + "orig_p"]])
-            iupdate.dst_ip = inet_xton(f[idx["id" + scope_separator + "resp_h"]])
-            iupdate.dst_port = int(f[idx["id" + scope_separator + "resp_p"]])
+            iupdate.src_ip = inet_xton(f[idx["id.orig_h"]])
+            iupdate.src_port = int(f[idx["id.orig_p"]])
+            iupdate.dst_ip = inet_xton(f[idx["id.resp_h"]])
+            iupdate.dst_port = int(f[idx["id.resp_p"]])
 
         if iupdate.src_ip in ExcludeNets:
             return
@@ -735,7 +755,7 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
             return
         iupdate.prot = Protocols[proto_val]
 
-    except (KeyError, ValueError, IndexError):
+    except (KeyError, ValueError):
         print("Ignoring corrupt line: %s" % line, file=sys.stderr)
         return
 
@@ -744,11 +764,11 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
             iupdate.service = f["service"]
         else:
             iupdate.service = f[idx["service"]]
-    except (KeyError, ValueError, IndexError):
-        iupdate.service = unset_field
 
-    if iupdate.service[-1] == "?":
-        iupdate.service = iupdate.service[:-1]
+        if iupdate.service[-1] == "?":
+            iupdate.service = iupdate.service[:-1]
+    except (KeyError, IndexError):
+        iupdate.service = unset_field
 
     iupdate.frags = 0
     if is_json:
@@ -766,20 +786,24 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
 
         if payload_orig * bytes_to_mbps > 700:
             # Bandwidth exceed due to Bro bug.
-            if is_json and Options.conn_version == 2:
-                print("UID %s originator exceeds bandwidth" % f["uid"], file=sys.stderr)
-            elif Options.conn_version == 2:
-                print("UID %s originator exceeds bandwidth" % f[idx["uid"]], file=sys.stderr)
+            if Options.conn_version == 2:
+                if is_json:
+                    uid = f["uid"]
+                else:
+                    uid = f[idx["uid"]]
+                print("UID %s originator exceeds bandwidth" % uid, file=sys.stderr)
             else:
                 print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
             payload_orig = 0
 
         if payload_resp * bytes_to_mbps > 700:
             # Bandwidth exceed due to Bro bug.
-            if is_json and Options.conn_version == 2:
-                print("UID %s originator exceeds bandwidth" % f["uid"], file=sys.stderr)
-            elif Options.conn_version == 2:
-                print("UID %s originator exceeds bandwidth" % f[idx["uid"]], file=sys.stderr)
+            if Options.conn_version == 2:
+                if is_json:
+                    uid = f["uid"]
+                else:
+                    uid = f[idx["uid"]]
+                print("UID %s originator exceeds bandwidth" % uid, file=sys.stderr)
             else:
                 print("%.6f originator exceeds bandwidth" % time, file=sys.stderr)
             payload_resp = 0
