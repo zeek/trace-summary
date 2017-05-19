@@ -1,0 +1,5 @@
+# Test a conn.log that is in JSON format.
+#
+# @TEST-EXEC: trace-summary -c $FILES/conn.log_json > out
+# @TEST-EXEC: btest-diff out
+

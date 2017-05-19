@@ -2,4 +2,6 @@
 #
 # @TEST-EXEC: trace-summary --conn-version 2 -c $FILES/conn.log > out
 # @TEST-EXEC: btest-diff out
+# @TEST-EXEC: trace-summary --conn-version 2 -c $FILES/conn.log_json > out2
+# @TEST-EXEC: btest-diff out2
 
