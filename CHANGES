@@ -1,4 +1,8 @@
 
+0.87 | 2017-05-26 08:28:23 -0500
+
+  * Release 0.88.
+
 0.86-15 | 2017-05-19 14:01:03 -0500
 
   * Fix to correctly identify JSON logs when "--conn-version=2" is specified.
