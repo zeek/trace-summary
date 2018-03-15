@@ -6,6 +6,15 @@ python:
   - "3.5"
   - "3.6"
 
+branches:
+  only:
+  - master
+
+notifications:
+  email:
+    recipients:
+    - bro-commits-internal@bro.org
+
 install: pip install btest pysubnettree
 
 script: make test BTEST=`which btest`
