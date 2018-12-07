@@ -1,7 +1,7 @@
 ..	-*- mode: rst-mode -*-
 ..
 .. Version number is filled in automatically.
-.. |version| replace:: 0.88
+.. |version| replace:: 0.88-2
 
 ====================================================
 trace-summary - Generating network traffic summaries
@@ -18,11 +18,10 @@ Download
 --------
 
 You can find the latest trace-summary release for download at
-http://www.bro.org/download.
+https://www.zeek.org/download.
 
-trace-summary's git repository is located at `git://git.bro.org/trace-summary.git
-<git://git.bro.org/trace-summary.git>`__. You can browse the repository
-`here <http://git.bro.org/trace-summary.git>`__.
+trace-summary's git repository is located at
+https://github.com/zeek/trace-summary
 
 This document describes trace-summary |version|. See the ``CHANGES``
 file for version history.

@@ -14,7 +14,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.88" # Automatically filled in.
+VERSION = "0.88-2" # Automatically filled in.
 
 random.seed()
 
