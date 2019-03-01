@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 from __future__ import print_function
+from datetime import datetime
 from json import loads
 import re
 import os
@@ -14,7 +15,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.88-2" # Automatically filled in.
+VERSION = "0.88" # Automatically filled in.
 
 random.seed()
 
@@ -356,6 +357,12 @@ def isoTime(t):
         return "N/A"
     return time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime(t))
 
+def iso2Epoch(ts):
+     p = '%Y-%m-%dT%H:%M:%S.%fZ'
+     epoch = datetime(1970, 1, 1)
+     time = (datetime.strptime(ts, p) - epoch).total_seconds()
+     return time
+
 def readPcap(file):
     global Total
     global Incoming
@@ -669,7 +676,11 @@ def parseConnLine(line, field_sep, unset_field, idx, max_idx_1, is_json, scope_s
 
     try:
         if is_json:
-            time = float(f["ts"])
+            # Check for ISO8601
+            if "Z" not in str(f["ts"]):
+                time = float(f["ts"])
+            else:
+                time = iso2Epoch(f["ts"])
         else:
             time = float(f[idx["ts"]])
     except ValueError:
