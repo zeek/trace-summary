@@ -1,4 +1,8 @@
 
+0.88-7 | 2019-03-07 12:17:53 -0800
+
+  * Allow for parsing JSON ISO8601 timestamp (Wes Lambert)
+
 0.88-2 | 2018-12-07 16:30:48 -0600
 
   * Update github/download link (Jon Siwek, Corelight)
