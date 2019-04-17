@@ -1,7 +1,7 @@
 ..	-*- mode: rst-mode -*-
 ..
 .. Version number is filled in automatically.
-.. |version| replace:: 0.88-7
+.. |version| replace:: 0.88-11
 
 ====================================================
 trace-summary - Generating network traffic summaries

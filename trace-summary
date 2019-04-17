@@ -15,7 +15,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.88-7" # Automatically filled in.
+VERSION = "0.88-11" # Automatically filled in.
 
 random.seed()
 
@@ -220,9 +220,9 @@ class Interval:
                     # Note: 15 is longest possible IPv4 address.
                     oversize = len(item) - 15
                     if oversize > 0:
-                        if dict == srcs:
+                        if dict is srcs:
                             src_over = max(src_over, oversize)
-                        elif dict == dsts:
+                        elif dict is dsts:
                             dst_over = max(dst_over, oversize)
 
             # Increase column widths, if necessary.
@@ -249,7 +249,7 @@ class Interval:
                 for (dict, length) in ((ports, 5), (srcs, srcwidth), (dsts, dstwidth), (servs, 11), (prots, 2), states):
                     try:
                         item = None
-                        if dict == srcs or dict == dsts:
+                        if dict is srcs or dict is dsts:
                             item = inet_ntox(dict[i][1])
                             if Options.resolve:
                                 addrs += [dict[i][1]]

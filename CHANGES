@@ -1,4 +1,8 @@
 
+0.88-11 | 2019-04-16 18:03:50 -0700
+
+  * GH-3: Fix unicode equality comparison warning (Jon Siwek, Corelight)
+
 0.88-7 | 2019-03-07 12:17:53 -0800
 
   * Allow for parsing JSON ISO8601 timestamp (Wes Lambert)
