@@ -32,12 +32,12 @@ Overview
 
 The ``trace-summary`` script reads both packet traces in `libpcap
 <http://www.tcpdump.org>`_ format and connection logs produced by the
-`Bro <http://www.bro.org>`_ network security monitor
+`Zeek <http://www.zeek.org>`_ network security monitor
 (for the latter, it supports both 1.x and 2.x log formats).
 
 Here are two example outputs in the most basic form (note that IP
 addresses are 'anonymized'). The first is from a packet trace and the
-second from a Bro connection log::
+second from a Zeek connection log::
 
 
  >== Total === 2005-01-06-14-23-33 - 2005-01-06-15-23-43
@@ -76,11 +76,11 @@ Prerequisites
 * This script requires Python 2.6 or newer.
 
 * The `pysubnettree
-  <http://www.bro.org/documentation/pysubnettree.html>`_ Python
+  <http://www.zeek.org/documentation/pysubnettree.html>`_ Python
   module.
 
 * Eddie Kohler's `ipsumdump <http://www.cs.ucla.edu/~kohler/ipsumdump>`_
-  if using ``trace-summary`` with packet traces (versus Bro connection logs)
+  if using ``trace-summary`` with packet traces (versus Zeek connection logs)
 
 Installation
 ------------
@@ -95,7 +95,7 @@ The general usage is::
    trace-summary [options] [input-file]
 
 Per default, it assumes the ``input-file`` to be a ``libpcap`` trace
-file. If it is a Bro connection log, use ``-c``. If ``input-file`` is
+file. If it is a Zeek connection log, use ``-c``. If ``input-file`` is
 not given, the script reads from stdin. It writes its output to
 stdout.
 
@@ -107,7 +107,7 @@ below. Run ``trace-summary --help`` to see the full list including
 some more esoteric ones.
 
 :-c:
-    Input is a Bro connection log instead of a ``libpcap`` trace
+    Input is a Zeek connection log instead of a ``libpcap`` trace
     file.
 
 :-b:

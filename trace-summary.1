@@ -16,7 +16,7 @@ vs. outgoing traffic, per subnet, and per time-interval.
 
 Per default, it assumes the
 .IR input-file
-to be a libpcap trace file. However, if it is a Bro connection log,
+to be a libpcap trace file. However, if it is a Zeek connection log,
 use \fB\-c\fR. If
 .IR input-file
 is not given, the script reads from stdin. It writes its output to stdout.
@@ -33,7 +33,7 @@ count fractions in terms of bytes rather than
 packets/connections
 .TP
 \fB\-c\fR, \fB\-\-conn\-summaries\fR
-input file contains Bro connection summaries
+input file contains Zeek connection summaries
 .TP
 \fB\-\-conn\-version\fR=\fI\,CONN_VERSION\/\fR
 when used with \fB\-c\fR, specify '1' for use with Bro
@@ -96,4 +96,4 @@ show top\-n for every interval
 maximum time in ISO format
 .SH AUTHOR
 .B trace-summary
-was written by The Bro Project <info@bro.org>.
+was written by The Zeek Project <info@zeek.org>.
