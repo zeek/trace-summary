@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 #
 # Replace hostnames that occur after text such as "#2=" (e.g. the text
-# "#3=bro.org" would become "#3=XXXX.XXXX.XXXX").
+# "#3=zeek.org" would become "#3=XXXX.XXXX.XXXX").
 
 sed 's/\(#[0-9]\{1,\}=\)[A-Za-z0-9][A-Za-z0-9.-]\{1,\}/\1XXXX.XXXX.XXXX/g'
 

@@ -15,7 +15,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.88-11" # Automatically filled in.
+VERSION = "0.88-17" # Automatically filled in.
 
 random.seed()
 
@@ -983,7 +983,7 @@ optparser = optparse.OptionParser(usage="%prog [options] <pcap-file>|<conn-summa
 optparser.add_option("-b", "--bytes", action="store_true", dest="bytes", default=False,
                      help="count fractions in terms of bytes rather than packets/connections")
 optparser.add_option("-c", "--conn-summaries", action="store_true", dest="conns", default=False,
-                     help="input file contains Bro connection summaries")
+                     help="input file contains Zeek connection summaries")
 optparser.add_option("--conn-version", action="store", type="int", dest="conn_version", default=0,
                      help="when used with -c, specify '1' for use with Bro version 1.x connection logs, or '2' for use with Bro 2.x format. '0' tries to guess the format")
 optparser.add_option("-C", "--chema", action="store_true", dest="chema", default=False,

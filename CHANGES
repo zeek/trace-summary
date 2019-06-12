@@ -1,4 +1,10 @@
 
+0.88-17 | 2019-06-12 15:07:07 -0700
+
+  * Update for a directory name change (Daniel Thayer)
+
+    Also a few other unrelated bro to zeek renaming changes.
+
 0.88-11 | 2019-04-16 18:03:50 -0700
 
   * GH-3: Fix unicode equality comparison warning (Jon Siwek, Corelight)
