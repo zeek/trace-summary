@@ -13,7 +13,7 @@ branches:
 notifications:
   email:
     recipients:
-    - bro-commits-internal@bro.org
+    - zeek-commits-internal@zeek.org
 
 install: pip install btest pysubnettree
 
