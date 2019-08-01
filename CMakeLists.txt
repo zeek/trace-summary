@@ -28,12 +28,12 @@ endif ()
 
 include(InstallShellScript)
 
-if ( NOT BRO_MAN_INSTALL_PATH )
-    set(BRO_MAN_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/share/man)
+if ( NOT ZEEK_MAN_INSTALL_PATH )
+    set(ZEEK_MAN_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/share/man)
 endif ()
 
 InstallShellScript(bin trace-summary)
-install(FILES trace-summary.1 DESTINATION ${BRO_MAN_INSTALL_PATH}/man1)
+install(FILES trace-summary.1 DESTINATION ${ZEEK_MAN_INSTALL_PATH}/man1)
 
 ########################################################################
 ## Build Summary

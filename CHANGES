@@ -1,4 +1,8 @@
 
+0.88-20 | 2019-08-01 11:09:51 -0700
+
+  * Change BRO_MAN_INSTALL_PATH CMake variable to ZEEK_MAN_INSTALL_PATH (Jon Siwek, Corelight)
+
 0.88-19 | 2019-06-17 20:15:18 -0700
 
   * Update Travis config for bro to zeek renaming (Daniel Thayer)
