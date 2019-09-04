@@ -1,7 +1,7 @@
 ..	-*- mode: rst-mode -*-
 ..
 .. Version number is filled in automatically.
-.. |version| replace:: 0.89
+.. |version| replace:: 0.89-3
 
 ====================================================
 trace-summary - Generating network traffic summaries
@@ -76,7 +76,7 @@ Prerequisites
 * This script requires Python 2.6 or newer.
 
 * The `pysubnettree
-  <http://www.zeek.org/documentation/pysubnettree.html>`_ Python
+  <https://github.com/zeek/pysubnettree>`_ Python
   module.
 
 * Eddie Kohler's `ipsumdump <http://www.cs.ucla.edu/~kohler/ipsumdump>`_
