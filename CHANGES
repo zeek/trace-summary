@@ -1,4 +1,8 @@
 
+0.89-9 | 2019-10-28 18:09:14 -0700
+
+  * Move CMake project() after cmake_minimum_required() (Jon Siwek, Corelight)
+
 0.89-3 | 2019-09-04 10:26:28 -0700
 
   * Fix dead URL to pysubnettree (The Alchemist)
