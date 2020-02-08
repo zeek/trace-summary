@@ -1,4 +1,8 @@
 
+0.90 | 2020-02-05 21:29:49 -0800
+
+  * Release 0.90
+
 0.89-9 | 2019-10-28 18:09:14 -0700
 
   * Move CMake project() after cmake_minimum_required() (Jon Siwek, Corelight)
