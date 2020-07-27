@@ -1,4 +1,10 @@
 
+0.91 | 2020-07-23 10:12:38 -0700
+
+  * Release 0.91
+
+  * Update btest.cfg for aux/ to auxil/ rename (Jon Siwek, Corelight)
+
 0.90-2 | 2020-02-19 10:31:50 -0800
 
   * Update link to ipsumdump (Jon Siwek, Corelight)
