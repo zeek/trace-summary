@@ -73,7 +73,7 @@ second from a Zeek connection log::
 Prerequisites
 -------------
 
-* This script requires Python 2.6 or newer.
+* This script requires Python 3.5 or newer.
 
 * The `pysubnettree
   <https://github.com/zeek/pysubnettree>`_ Python
