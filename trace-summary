@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 from __future__ import print_function
 from datetime import datetime
@@ -15,7 +15,7 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.91" # Automatically filled in.
+VERSION = "0.91-9" # Automatically filled in.
 
 random.seed()
 
@@ -371,8 +371,7 @@ def readPcap(file):
     proc = subprocess.Popen("ipsumdump -r %s --timestamp --src --dst --sport --dport --length --protocol --fragment --payload-length -Q" % file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     for line in proc.stdout:
-        if using_py3:
-            line = line.decode()
+        line = line.decode()
 
         if line.startswith("!"):
             continue
@@ -874,8 +873,7 @@ def gethostbyaddr( ip, timeout = 5, default = "<???>" ):
         except socket.herror:
             pass
 
-        if using_py3:
-            host = host.encode()
+        host = host.encode()
 
         os.write( pout, host )
         posix._exit(127)
@@ -891,8 +889,7 @@ def gethostbyaddr( ip, timeout = 5, default = "<???>" ):
 
         if os.WIFEXITED(status) and os.WEXITSTATUS(status) == 127:
             host = os.read(pin, 8192)
-            if using_py3:
-                host = host.decode()
+            host = host.decode()
     except OSError:
         # If the child process is killed while waitpid() is waiting, then
         # only Python 2 (not Python 3) raises OSError.
@@ -952,12 +949,6 @@ def unspecified_addr(ipstr):
 
 
 ####### Main
-
-# Check which version of Python is running
-if sys.version_info[0] >= 3:
-    using_py3 = True
-else:
-    using_py3 = False
 
 Total = Interval()
 Incoming = Interval()

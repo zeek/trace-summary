@@ -1,4 +1,16 @@
 
+0.91-9 | 2020-11-26 18:00:49 +0000
+
+  * Remove CI testing of older Python versions and add newer versions (Jon Siwek, Corelight)
+
+  * Remove empty/useless btest file (Jon Siwek, Corelight)
+
+  * Update trace-summary script to assume use of Python 3 (Jon Siwek, Corelight)
+
+  * Change Python invocations to the explicit `python3` (Jon Siwek, Corelight)
+
+  * Update README for new Python 3 requirement (Jon Siwek, Corelight)
+
 0.91 | 2020-07-23 10:12:38 -0700
 
   * Release 0.91
