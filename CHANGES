@@ -1,4 +1,8 @@
 
+0.91-11 | 2020-12-02 11:10:21 -0800
+
+  * Update minimum required CMake to 3.5 (Jon Siwek, Corelight)
+
 0.91-9 | 2020-11-26 18:00:49 +0000
 
   * Remove CI testing of older Python versions and add newer versions (Jon Siwek, Corelight)
