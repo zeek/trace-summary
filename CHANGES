@@ -1,4 +1,11 @@
 
+0.91-16 | 2020-12-12 20:19:48 -0800
+
+  * Add Zeek's Python module directory to the search path (Christian Kreibich, Corelight)
+
+    Without this, the installation's trace-summary doesn't actually find
+    the SubnetTree module.
+
 0.91-14 | 2020-12-10 15:43:55 +0000
 
   * Baseline refresh to reflect btest 0.64 (Christian Kreibich, Corelight)

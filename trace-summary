@@ -15,9 +15,17 @@ import optparse
 import random
 import subprocess
 
-VERSION = "0.91-14" # Automatically filled in.
+VERSION = "0.91-16" # Automatically filled in.
 
 random.seed()
+
+# For Zeek-bundled installation, explictly add the Python path we've
+# installed ourselves under, so we find the SubnetTree module:
+ZEEK_PYTHON_DIR = '@PY_MOD_INSTALL_DIR@'
+if os.path.isdir(ZEEK_PYTHON_DIR):
+    sys.path.append(os.path.abspath(ZEEK_PYTHON_DIR))
+else:
+    ZEEK_PYTHON_DIR = None
 
 import SubnetTree
 
