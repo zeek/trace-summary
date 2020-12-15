@@ -1,4 +1,8 @@
 
+0.92 | 2020-12-12 20:20:06 -0800
+
+  * Release 0.92.
+
 0.91-16 | 2020-12-12 20:19:48 -0800
 
   * Add Zeek's Python module directory to the search path (Christian Kreibich, Corelight)
