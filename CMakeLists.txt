@@ -5,11 +5,7 @@ include(cmake/CommonCMakeConfig.cmake)
 ########################################################################
 ## Dependency Configuration
 
-find_package(PythonInterp)
-
-if (NOT PYTHON_EXECUTABLE)
-    message(FATAL_ERROR "A Python installation is required.")
-endif ()
+find_package(Python 3.7 REQUIRED Interpreter)
 
 if (NOT SUBNETTREE_FOUND)
     # the check for SubnetTree is ignored if SubnetTree_FOUND is set
