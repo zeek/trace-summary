@@ -1,15 +1,11 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(trace-summary NONE)
 include(cmake/CommonCMakeConfig.cmake)
 
 ########################################################################
 ## Dependency Configuration
 
-find_package(PythonInterp)
-
-if (NOT PYTHON_EXECUTABLE)
-    message(FATAL_ERROR "A Python installation is required.")
-endif ()
+find_package(Python 3.7 REQUIRED Interpreter)
 
 if (NOT SUBNETTREE_FOUND)
     # the check for SubnetTree is ignored if SubnetTree_FOUND is set
