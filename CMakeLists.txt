@@ -5,7 +5,7 @@ include(cmake/CommonCMakeConfig.cmake)
 ########################################################################
 ## Dependency Configuration
 
-find_package(Python 3.7 REQUIRED Interpreter)
+find_package(Python 3.5 REQUIRED Interpreter)
 
 if (NOT SUBNETTREE_FOUND)
     # the check for SubnetTree is ignored if SubnetTree_FOUND is set
