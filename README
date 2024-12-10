@@ -1,7 +1,7 @@
 ..	-*- mode: rst-mode -*-
 ..
 .. Version number is filled in automatically.
-.. |version| replace:: 0.93-14
+.. |version| replace:: 0.93-22
 
 ====================================================
 trace-summary - Generating network traffic summaries
@@ -73,7 +73,7 @@ second from a Zeek connection log::
 Prerequisites
 -------------
 
-* This script requires Python 3.5 or newer.
+* This script requires Python 3.9 or newer.
 
 * The `pysubnettree
   <https://github.com/zeek/pysubnettree>`_ Python

@@ -1,3 +1,13 @@
+0.93-22 | 2024-12-10 16:18:56 -0700
+
+  * Update cmake submodule to master [nomail] (Tim Wojtulewicz, Corelight)
+
+  * Remove old obsolete travis.yml (Tim Wojtulewicz, Corelight)
+
+  * Require python 3.9 (Tim Wojtulewicz, Corelight)
+
+  * Revert update to Python 3.7 (Tim Wojtulewicz, Corelight)
+
 0.93-14 | 2023-08-02 10:59:05 -0700
 
   * Update cmake submodule to deprecate FindRequiredPackage (Tim Wojtulewicz, Corelight)
