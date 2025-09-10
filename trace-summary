@@ -535,6 +535,7 @@ Protocols = {
     "udp": 17,
     "I": 1,
     "icmp": 1,
+    "unknown_transport": 0,
 }
 States = [
     "OTH",

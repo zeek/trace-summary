@@ -1,0 +1,4 @@
+# Test a conn.log that has an unknown transport from Zeek v7.1.0+.
+#
+# @TEST-EXEC: trace-summary -c $FILES/conn.log_unknown_transport > out
+# @TEST-EXEC: btest-diff out
