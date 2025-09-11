@@ -1,3 +1,4 @@
 build
 *~
 trace_summary.egg-info
+dist
