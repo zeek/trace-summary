@@ -1,3 +1,28 @@
+0.93-36 | 2025-09-11 13:08:51 -0700
+
+  * Add a few more entries to gitignore (Tim Wojtulewicz, Corelight)
+
+  * Make BTest a proper dev dependency (Benjamin Bannier)
+
+  * Remove dependency on setuptools (Benjamin Bannier)
+
+    Instead of just having a minimal `setup.py` migrate to `build` for a
+    simpler setup.
+
+  * Add github workflows for pre-commit and running btests (Tim Wojtulewicz, Corelight)
+
+  * Add pyproject.toml, flesh out setup.py (Tim Wojtulewicz, Corelight)
+
+  * Add typos to pre-commit (Tim Wojtulewicz, Corelight)
+
+  * Add cmake-format to pre-commit, use config from Zeek (Tim Wojtulewicz, Corelight)
+
+  * Add ruff-check to pre-commit (Tim Wojtulewicz, Corelight)
+
+  * Add pre-commit, run ruff-format on the code based on the Zeek ruff config (Tim Wojtulewicz, Corelight)
+
+  * Updating submodule(s) [nomail] (Tim Wojtulewicz, Corelight)
+
 0.93-22 | 2024-12-10 16:18:56 -0700
 
   * Update cmake submodule to master [nomail] (Tim Wojtulewicz, Corelight)

@@ -1,4 +1,3 @@
-
 DIAG=diag.log
 BTEST=../../../../btest/btest
 
@@ -6,7 +5,7 @@ all: cleanup btest-verbose
 
 # Showing all tests.
 btest-verbose:
-	@$(BTEST) -j -f $(DIAG)
+	@$(BTEST) -j -d -f $(DIAG)
 
 brief: cleanup btest-brief
 

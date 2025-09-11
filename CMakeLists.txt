@@ -5,7 +5,7 @@ include(cmake/CommonCMakeConfig.cmake)
 ########################################################################
 ## Dependency Configuration
 
-find_package(Python 3.9 REQUIRED Interpreter)
+find_package(Python 3.10 REQUIRED Interpreter)
 
 if (NOT SUBNETTREE_FOUND)
     # the check for SubnetTree is ignored if SubnetTree_FOUND is set
@@ -23,7 +23,7 @@ endif ()
 
 include(InstallShellScript)
 
-if ( NOT ZEEK_MAN_INSTALL_PATH )
+if (NOT ZEEK_MAN_INSTALL_PATH)
     set(ZEEK_MAN_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/share/man)
 endif ()
 
@@ -33,12 +33,8 @@ install(FILES trace-summary.1 DESTINATION ${ZEEK_MAN_INSTALL_PATH}/man1)
 ########################################################################
 ## Build Summary
 
-message(
-    "\n=============|  trace-summary Install Summary  |================"
-    "\n"
-    "\nInstall destination:    ${CMAKE_INSTALL_PREFIX}/bin"
-    "\n"
-    "\n================================================================\n"
-)
+message("\n=============|  trace-summary Install Summary  |================" "\n"
+        "\nInstall destination:    ${CMAKE_INSTALL_PREFIX}/bin" "\n"
+        "\n================================================================\n")
 
 include(UserChangedWarning)
