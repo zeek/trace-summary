@@ -1,6 +1,6 @@
 [project]
 name = "trace-summary"
-dynamic = ["version"]
+version = "0.93-22"  # Filled in automatically.
 description = "Generates network traffic summaries"
 dependencies = [
   "pysubnettree"
@@ -25,6 +25,11 @@ Repository = "https://github.com/zeek/trace-summary"
 [[project.maintainers]]
   name = "The Zeek Team"
   email = "info@zeek.org"
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.3.0",
+]
 
 [build-system]
 requires = ["setuptools"]
