@@ -28,6 +28,7 @@ Repository = "https://github.com/zeek/trace-summary"
 
 [project.optional-dependencies]
 dev = [
+    "btest>=1.2",
     "build>=1.3.0",
 ]
 

@@ -30,7 +30,6 @@ jobs:
       - name: "Install pip and the packages"
         run: |
             python3 -m pip install --upgrade pip
-            python3 -m pip install btest
             python3 -m pip install .[dev]
       - name: "Run btests with installed version"
         run: |
