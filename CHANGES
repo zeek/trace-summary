@@ -1,3 +1,11 @@
+0.94 | 2025-09-12 09:06:41 -0700
+
+  * Release 0.94.
+
+0.93-38 | 2025-09-12 09:06:33 -0700
+
+  * Support unknown_transport added in Zeek v7.1.0 (Tim Wojtulewicz, Corelight)
+
 0.93-36 | 2025-09-11 13:08:51 -0700
 
   * Add a few more entries to gitignore (Tim Wojtulewicz, Corelight)

@@ -14,7 +14,7 @@ import time
 from datetime import datetime
 from json import loads
 
-VERSION = "0.93-36"  # Automatically filled in.
+VERSION = "0.94"  # Automatically filled in.
 
 random.seed()
 
@@ -535,6 +535,7 @@ Protocols = {
     "udp": 17,
     "I": 1,
     "icmp": 1,
+    "unknown_transport": 0,
 }
 States = [
     "OTH",
