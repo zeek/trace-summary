@@ -3,7 +3,9 @@ name: Check
 on:
   pull_request:
   push:
-    branches: [master]
+    branches:
+      - master
+      - 'release/zeek-*'
     tags:
       - 'v*'
       - '!v*-dev'
