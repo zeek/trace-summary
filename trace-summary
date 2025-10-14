@@ -14,7 +14,7 @@ import time
 from datetime import datetime
 from json import loads
 
-VERSION = "0.94"  # Automatically filled in.
+VERSION = "0.94-2"  # Automatically filled in.
 
 random.seed()
 
@@ -1022,7 +1022,9 @@ def formatVal(val):
     ):
         if val >= factor:
             return f"{prefix}{(val / factor):3.1f}{unit}"
-    return val  # Should not happen
+    return str(
+        val
+    )  # The value is either `int(0)` or a different type, render it directly.
 
 
 def readNetworks(file):

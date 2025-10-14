@@ -1,6 +1,6 @@
 [project]
 name = "trace-summary"
-version = "0.94"  # Filled in automatically.
+version = "0.94.dev2"  # Filled in automatically.
 description = "Generates network traffic summaries"
 dependencies = [
   "pysubnettree"

@@ -1,3 +1,10 @@
+0.94-2 | 2025-10-14 09:28:44 -0400
+
+  * Fix `ValueError` when `formatVal` is 0 (Evan Typanski, Corelight)
+
+    Using f-strings doesn't implicitly convert the val to a string, whereas
+    before the % formatting would. Caused by linter changes 836454e.
+
 0.94 | 2025-09-12 09:06:41 -0700
 
   * Release 0.94.
