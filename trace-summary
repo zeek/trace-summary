@@ -1022,7 +1022,9 @@ def formatVal(val):
     ):
         if val >= factor:
             return f"{prefix}{(val / factor):3.1f}{unit}"
-    return val  # Should not happen
+    return str(
+        val
+    )  # The value is either `int(0)` or a different type, render it directly.
 
 
 def readNetworks(file):
