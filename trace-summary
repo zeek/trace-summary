@@ -14,7 +14,7 @@ import time
 from datetime import datetime
 from json import loads
 
-VERSION = "0.94-2"  # Automatically filled in.
+VERSION = "0.94-5"  # Automatically filled in.
 
 random.seed()
 
@@ -773,6 +773,23 @@ def parseConnLine(
     else:
         proto_val = f[idx["proto"]]
 
+    # Track unknown_transport connections
+    if proto_val == "unknown_transport":
+        try:
+            if is_json:
+                src_ip_str = f["id" + scope_separator + "orig_h"]
+                dst_ip_str = f["id" + scope_separator + "resp_h"]
+            else:
+                src_ip_str = f[idx["id.orig_h"]]
+                dst_ip_str = f[idx["id.resp_h"]]
+
+            ip_pair = (src_ip_str, dst_ip_str)
+            UnknownTransportConns[ip_pair] = UnknownTransportConns.get(ip_pair, 0) + 1
+        except (KeyError, IndexError):
+            pass
+        # Skip further processing for unknown_transport
+        return
+
     if Options.tcp and proto_val != "tcp":
         return
 
@@ -1089,6 +1106,9 @@ NonLocalCount = 0
 Ports = None
 
 ExcludeNets = SubnetTree.SubnetTree(True)
+
+# Track unknown_transport connections by src/dst IP pair
+UnknownTransportConns = {}
 
 optparser = optparse.OptionParser(
     usage="%prog [options] <pcap-file>|<conn-summaries>", version=VERSION
@@ -1469,6 +1489,25 @@ for net in locals:
 
     if i.updates:
         print(i.format(conns=Options.conns, title=net + " " + txt))
+
+# Display unknown_transport summary
+if UnknownTransportConns:
+    print("\n>== Unknown Transport Connections Summary by Source/Destination IPs\n")
+
+    # Sort by count (most frequent first)
+    sorted_unknown = sorted(
+        UnknownTransportConns.items(), key=lambda x: x[1], reverse=True
+    )
+
+    print(f"     {'Source IP':<40s} | {'Destination IP':<40s} | Count")
+    print("     " + "-" * 100)
+
+    for (src_ip, dst_ip), count in sorted_unknown:
+        print(f"     {src_ip:<40s} | {dst_ip:<40s} | {formatVal(count)}")
+
+    print(
+        f"\n     Total unknown_transport connections: {formatVal(sum(UnknownTransportConns.values()))}\n"
+    )
 
 print(
     f"First: {isoTime(Total.start):<16} ({Total.start:.6f}) Last: {isoTime(Total.end)} {Total.end:.6f}"

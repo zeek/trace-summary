@@ -1,3 +1,11 @@
+0.94-5 | 2025-11-11 15:47:19 -0700
+
+  * Add summary of unknown transports seen (Tim Wojtulewicz, Corelight)
+
+  * Make workflow run on branches for zeek releases (Tim Wojtulewicz, Corelight)
+
+    (cherry picked from commit 037134fdb20fc1d0c6deec931a4e49468b7a9165)
+
 0.94-2 | 2025-10-14 09:28:44 -0400
 
   * Fix `ValueError` when `formatVal` is 0 (Evan Typanski, Corelight)
